@@ -1,0 +1,29 @@
+<div xmlns:n="native" id="coaMasterPanel" apply="${coaMasterController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">COA Master</n:span>
+		</div>
+		<div style="margin-top: 10px; margin-left: 10px;">
+			<div class="list-header" style="width: 1400px">
+				<div class="list-header-content">
+					<button id="newAccountMasterButton" label="New"></button>
+					<button id="cancelAccountMasterButton" label="Cancel"></button>					
+				</div>
+			</div>
+			<listbox id="coaMasterListbox" mold="paging" height="500px" width="1400px" pageSize="7">
+				<listhead>
+					<listheader label="Account Type" width="160px"></listheader>
+					<listheader label="Account Group" width="160px"></listheader>
+					<listheader label="SubAccount-01" width="160px"></listheader>
+					<listheader label="SubAccount-02" width="160px"></listheader>
+					<listheader label="Acc Master" width="90px"></listheader>
+					<listheader label="Acc Master Name" width="160px"></listheader>
+					<listheader label="COA" width="80px"></listheader>
+					<listheader label="Credit Account" width="120px"></listheader>
+					<listheader label="Active" width="80px"></listheader>
+					<listheader label="Mod" width="100px"/>
+				</listhead>
+			</listbox>	
+		</div>			
+	</n:section>
+</div>

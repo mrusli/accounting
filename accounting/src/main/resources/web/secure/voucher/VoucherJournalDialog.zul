@@ -1,0 +1,31 @@
+<?page title="Dialog" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window xmlns:n="native" id="voucherJournalDialogWin" height="500px" border="normal" apply="${voucherJournalDialogController}">
+	<listbox id="dbcrListbox" mold="paging" height="300px" width="880px">
+		<listhead>
+			<listheader label="COA" width="220px"/>
+			<listheader label="Description" width="300px"/>
+			<listheader label="Debit(Rp.)" width="130px"/>
+			<listheader label="Credit(Rp.)" width="130px"/>
+			<listheader width="100px"/>
+		</listhead>
+		<listfoot>
+			<listfooter></listfooter>
+			<listfooter label="Total" align="right"></listfooter>
+			<listfooter align="right"></listfooter>
+			<listfooter align="right"></listfooter>
+			<listfooter></listfooter>
+		</listfoot>
+	</listbox>
+	<div class="list-footer">
+		<div class="list-footer-content">
+			<label id="statusLabel"></label>
+		</div>
+	</div>
+	<div style="padding-top: 10px; padding-left: 10px;">
+		<button id="addButton" label="Add"></button>
+		<button id="checkAndSaveButton" label="Check"></button>
+		<button id="cancelButton" label="Cancel"></button>
+	</div>
+</window>
+</zk>

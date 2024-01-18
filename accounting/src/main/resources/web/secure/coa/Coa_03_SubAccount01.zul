@@ -1,0 +1,24 @@
+<div xmlns:n="native" id="coaSubAccount01Panel" apply="${coaSubAccount01Controller}">
+<n:section class="panel-section">
+	<div class="panel-content">
+		<n:span class="text">COA SubAccount01</n:span>
+	</div>
+	<div style="margin-top: 10px; margin-left: 10px;">
+		<div class="list-header" style="width: 780px">
+			<div class="list-header-content">
+				<button id="newSubAccount01Button" label="New"></button>					
+			</div>
+		</div>
+		<listbox id="coaSubAccount01Listbox" mold="paging" height="500px" width="780px" pageSize="7">
+			<listhead>
+				<listheader label="Account Type Name" width="160px"></listheader>
+				<listheader label="Account Group Name" width="160px"></listheader>
+				<listheader label="SubAccount01" width="120px"></listheader>
+				<listheader label="SubAccount01 Name" width="160px"></listheader>
+				<listheader label="COA" width="60px"></listheader>
+				<listheader width="100px"/>
+			</listhead>
+		</listbox>	
+	</div>		
+</n:section>
+</div>

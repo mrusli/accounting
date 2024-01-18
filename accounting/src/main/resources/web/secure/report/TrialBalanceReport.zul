@@ -1,0 +1,26 @@
+<div xmlns:n="native" id="trialBalanceReportPanel" apply="${trialBalanceReportController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">Trial Balance</n:span>
+		</div>
+		<div style="margin-top: 10px; margin-left: 10px;">
+			<div class="list-header" style="height:60px; width: 1205px">
+				<div class="list-header-content">
+					<n:span>Report Start Date:</n:span>
+					<datebox id="startDatebox"></datebox>					
+					<n:span>Report End Date:</n:span>
+					<datebox id="endDatebox"></datebox>					
+				</div>
+			</div>
+			<listbox id="trialBalanceListbox" mold="paging" height="500px" width="1205px" pageSize="7">
+				<listhead>
+					<listheader label="Chart of Account" width="320px"/>
+					<listheader label="Account No" width="160px"/>
+					<listheader label="Total Debit(Rp.)" width="160px" align="right"/>
+					<listheader label="Total Credit(Rp.)" width="160px" align="right"/>
+					<listheader />
+				</listhead>
+			</listbox>			
+		</div>		
+	</n:section>
+</div>

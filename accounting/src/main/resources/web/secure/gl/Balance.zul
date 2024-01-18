@@ -1,0 +1,28 @@
+<div xmlns:n="native" id="balancePanel" apply="${accountBalanceController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">Account Balance</n:span>
+		</div>
+		<div style="margin-top: 10px; margin-left: 10px;">
+			<div class="list-header" style="margin-left: 10px; height:60px; width: 1205px">
+				<div class="list-header-content">
+					<n:span>Journal Start Date:</n:span>
+					<datebox id="startDatebox"></datebox>					
+					<n:span>Journal End Date:</n:span>
+					<datebox id="endDatebox"></datebox>					
+				</div>
+			</div>
+			<listbox id="accountBalanceListbox" mold="paging" height="500px" width="1205px" pageSize="7">
+				<listhead>
+					<listheader label="Date" width="180px"/>
+					<listheader label="COA" width="260px"/>
+					<listheader label="Total Debit(Rp.)" width="160px" align="right"/>
+					<listheader label="Total Credit(Rp.)" width="160px" align="right"/>
+					<listheader label="Balance Amount(Rp.)" width="160px" align="right"/>
+					<listheader label="Reset Balance" width="120px"/>
+					<listheader />
+				</listhead>
+			</listbox>			
+		</div>		
+	</n:section>
+</div>

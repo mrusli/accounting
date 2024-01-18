@@ -1,0 +1,46 @@
+<div xmlns:n="native" id="journalActivityPanel" apply="${journalActivityController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">Account Activities</n:span>
+		</div>
+		<div class="list-header" style="margin-left: 10px; height:60px; width: 1205px">
+			<div class="list-header-content">
+				<n:span class="text">Start Date:</n:span>
+				<datebox id="startDatebox"></datebox>					
+				<n:span class="text">End Date:</n:span>
+				<datebox id="endDatebox"></datebox>					
+			</div>
+		</div>		
+		<div style="padding-left: 10px; display: flex; align-items: top;">		
+			<div height="100%" width="380px">
+				<listbox id="coaListbox" mold="paging" height="500px" checkmark="true" pageSize="7" width="350px">
+					<listhead>
+						<listheader label="Chart of Account" width="330px"></listheader>
+						<listheader />
+					</listhead>				
+				</listbox>
+				<div style="padding-top: 45px; padding-bottom: 10px;">
+					<button id="reportButton" label="Report"></button>			
+				</div>
+			</div>
+			<div style="padding-left: 10px;" height="100%" width="100%">
+				<listbox id="glListbox" mold="paging" height="500px" pageSize="7" width="850px">
+					<listhead>
+						<listheader label="Transaction Date" width="160px"></listheader>
+						<listheader label="Transaction Description" width="280px"></listheader>
+						<listheader label="Debit(Rp.)" width="160px" align="right"></listheader>
+						<listheader label="Credit(Rp.)" width="160px" align="right"></listheader>
+						<listheader />
+					</listhead>
+					<listfoot>
+						<listfooter></listfooter>
+						<listfooter></listfooter>
+						<listfooter align="right"></listfooter>
+						<listfooter align="right"></listfooter>
+						<listfooter/>
+					</listfoot>
+				</listbox>			
+			</div>
+		</div>
+	</n:section>
+</div>

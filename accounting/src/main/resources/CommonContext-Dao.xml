@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="CommonContext-Config.xml"></import>
+
+	<!-- common -->
+
+	<bean id="dao" class="com.pyramix.persistence.common.dao.hibernate.DaoHibernate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>        
+
+	<!-- User -->
+
+    <bean id="userDao" class="com.pyramix.persistence.user.dao.hibernate.UserHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>	
+
+    <!-- COA -->
+    
+    <bean id="coa_01_AccountTypeDao" class="com.pyramix.persistence.coa.dao.hibernate.Coa_01_AccountTypeHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>    
+    </bean> 
+    
+    <bean id="coa_02_AccountGroupDao" class="com.pyramix.persistence.coa.dao.hibernate.Coa_02_AccountGroupHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>    
+    </bean>
+    
+    <bean id="coa_03_SubAccount01Dao" class="com.pyramix.persistence.coa.dao.hibernate.Coa_03_SubAccount01Hibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>    
+    </bean>
+
+    <bean id="coa_04_SubAccount02Dao" class="com.pyramix.persistence.coa.dao.hibernate.Coa_04_SubAccount02Hibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>    
+    </bean>
+
+    <bean id="coa_05_AccountMasterDao" class="com.pyramix.persistence.coa.dao.hibernate.Coa_05_AccountMasterHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>    
+    </bean>
+
+    <!-- Voucher -->
+    
+    <bean id="voucherJournalDao" class="com.pyramix.persistence.voucher.dao.hibernate.VoucherJournalHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="voucherSerialNumberDao" class="com.pyramix.persistence.voucher.dao.hibernate.VoucherSerialNumberHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <!-- GL -->
+    
+    <bean id="generalLedgerDao" class="com.pyramix.persistence.gl.dao.hibernate.GeneralLedgerHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="balanceDao" class="com.pyramix.persistence.gl.dao.hibernate.BalanceHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>    
+        
+</beans>

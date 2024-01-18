@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="CommonContext-Dao.xml"/>
+
+	<bean id="basisController" class="com.pyramix.web.common.GFCBaseController" abstract="true" scope="prototype">
+	
+	</bean>	
+
+	<bean id="mainController" class="com.pyramix.web.main.MainController" scope="prototype" parent="basisController">
+	
+	</bean>
+	
+	<bean id="dashboardController" class="com.pyramix.web.dashboard.DashboardController" scope="prototype" parent="basisController">
+	
+	</bean>	
+	
+	<bean id="coaTypeController" class="com.pyramix.web.coa.Coa_01_AccountTypeController" scope="prototype" parent="basisController">
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>
+	</bean>
+
+	<bean id="coaGroupController" class="com.pyramix.web.coa.Coa_02_AccountGroupController" scope="prototype" parent="basisController">
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>	
+		<property name="coa_02_AccountGroupDao" ref="coa_02_AccountGroupDao"></property>
+		<property name="coa_03_SubAccount01Dao" ref="coa_03_SubAccount01Dao"></property>
+		<property name="coa_04_SubAccount02Dao" ref="coa_04_SubAccount02Dao"></property>		
+	</bean>
+
+	<bean id="coaSubAccount01Controller" class="com.pyramix.web.coa.Coa_03_SubAccount01Controller" scope="prototype" parent="basisController">
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>	
+		<property name="coa_02_AccountGroupDao" ref="coa_02_AccountGroupDao"></property>
+		<property name="coa_03_SubAccount01Dao" ref="coa_03_SubAccount01Dao"></property>
+		<property name="coa_04_SubAccount02Dao" ref="coa_04_SubAccount02Dao"></property>	
+	</bean>
+
+	<bean id="coaSubAccount02Controller" class="com.pyramix.web.coa.Coa_04_SubAccount02Controller" scope="prototype" parent="basisController">
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>	
+		<property name="coa_02_AccountGroupDao" ref="coa_02_AccountGroupDao"></property>
+		<property name="coa_03_SubAccount01Dao" ref="coa_03_SubAccount01Dao"></property>	
+		<property name="coa_04_SubAccount02Dao" ref="coa_04_SubAccount02Dao"></property>	
+	</bean>
+
+	<bean id="coaMasterController" class="com.pyramix.web.coa.Coa_05_MasterController" scope="prototype" parent="basisController">
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>	
+		<property name="coa_02_AccountGroupDao" ref="coa_02_AccountGroupDao"></property>
+		<property name="coa_03_SubAccount01Dao" ref="coa_03_SubAccount01Dao"></property>	
+		<property name="coa_04_SubAccount02Dao" ref="coa_04_SubAccount02Dao"></property>
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+	</bean>
+	
+	<!-- COA Dialog -->
+	
+	<bean id="coa_05_MasterDialogControl" class="com.pyramix.web.coa.Coa_05_MasterDialogController" scope="prototype" parent="basisController">
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+	</bean>
+	
+	<!-- SerialNumber -->
+	
+	<bean id="serialNumberGenerator" class="com.pyramix.web.serial.SerialNumberGenerator" scope="prototype" parent="basisController">
+		<property name="voucherSerialNumberDao" ref="voucherSerialNumberDao"></property>
+	</bean>	
+	
+	<!-- Voucher -->
+	
+	<bean id="voucherJournalController" class="com.pyramix.web.voucher.VoucherJournalController" scope="prototype" parent="basisController">
+		<property name="serialNumberGenerator" ref="serialNumberGenerator"></property>
+		<property name="voucherJournalDao" ref="voucherJournalDao"></property>
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+
+	<bean id="voucherJournalDialogController" class="com.pyramix.web.voucher.VoucherJournalDialogController" scope="prototype" parent="basisController">
+	
+	</bean>
+	
+	<!-- GL -->
+	
+	<bean id="journalActivityController" class="com.pyramix.web.gl.JournalActivityController" scope="prototype" parent="basisController">
+		<property name="generalLedgerDao" ref="generalLedgerDao"></property>
+		<property name="balanceDao" ref="balanceDao"></property>
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+	</bean>
+	
+	<bean id="accountBalanceController" class="com.pyramix.web.gl.BalanceController" scope="prototype" parent="basisController">
+		<property name="generalLedgerDao" ref="generalLedgerDao"></property>
+		<property name="balanceDao" ref="balanceDao"></property>
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+	</bean>
+	
+	<!-- Report -->
+	
+	<bean id="trialBalanceReportController" class="com.pyramix.web.report.TrialBalanceReportController" scope="prototype" parent="basisController">
+		<property name="balanceDao" ref="balanceDao"></property>
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+	</bean>
+	
+	<bean id="journalReportController" class="com.pyramix.web.report.JournalReportController" scope="prototype" parent="basisController">
+	
+	</bean>		
+</beans>

@@ -1,0 +1,23 @@
+<div xmlns:n="native" id="coaTypePanel" apply="${coaTypeController}">
+<n:section class="panel-section">
+	<div class="panel-content">
+		<n:span class="text">Chart of Account (COA) - Account Type</n:span>
+	</div>
+	<div style="margin-top: 10px; margin-left: 10px;">
+		<div class="list-header" style="width: 600px;">
+			<div class="list-header-content">
+				<button id="newAccounTypeButton" label="New"></button>					
+			</div>
+		</div>
+		<listbox id="coaTypeListbox" mold="paging" height="500px" width="600px">
+			<listhead>
+				<listheader label="No" width="80px"></listheader>
+				<listheader label="Account Type Name" width="200px"></listheader>
+				<listheader width="100px"/>
+				<listheader width="100px"/>
+				<listheader width="100px"/>
+			</listhead>
+		</listbox>	
+	</div>	
+</n:section>
+</div>

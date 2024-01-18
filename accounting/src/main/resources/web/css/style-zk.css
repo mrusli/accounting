@@ -1,0 +1,48 @@
+@charset "ISO-8859-1";
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&family=Play:wght@400;700&display=swap');
+body {
+	padding: 0;
+}
+.mainWindow {
+	margin: 0px;
+	padding: 0px;
+	border-color: #ffffff;
+	border-radius: 0px;
+	background-color: #ffffff;
+	
+	font-family: "Play",sans-serif;
+}
+.z-window-content {
+	padding: 0;
+	background: none;
+}
+.mainGrid {
+	border: 0px;
+	font-family: "Play",sans-serif;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #666;
+    background-color: #fff;	
+}
+.mainGrid > .z-cell {
+	border: inherit;
+	font: inherit;    
+    line-height: inherit;
+    color: inherit;
+    background-color: inherit;
+}
+.mainGrid > .z-cell > .z-label, .z-radio-content, .z-checkbox-content, .z-loading {
+	font: inherit;
+    line-height: inherit;
+    color: inherit;
+    background-color: inherit;
+}
+.mainGrid > .z-cell > .z-textbox, .z-decimalbox, .z-intbox, .z-longbox, .z-doublebox {
+	font: inherit;
+    line-height: inherit;
+    color: inherit;
+    background-color: inherit;
+}
+.mainGrid > .z-row-inner {
+	border: inherit;
+}

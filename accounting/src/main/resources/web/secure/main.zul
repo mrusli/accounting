@@ -1,0 +1,113 @@
+<?page title="Pyramix-Accounting" contentType="text/html;charset=UTF-8"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+<?link rel="shortcut icon" type="image/x-icon" href="/zkau/web/img/favicon.ico"?>
+<?link rel="stylesheet" type="text/css" href="/zkau/web/css/style-main.css"?>
+<?link rel="stylesheet" type="text/css" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"?>
+<zk>
+<window xmlns:n="native" id="mainWin" border="none" sclass="mainWindow" apply="${mainController}">
+	<n:nav class="sidebar close">
+		<n:header>
+			<div class="image-text">
+				<span class="image">
+					<n:img src="/zkau/web/img/logo.jpg" alt="logo"></n:img>
+				</span>
+				<div class="text header-text">
+					<n:span class="name">Pyramix</n:span>
+					<n:span class="profession">Accounting</n:span>
+				</div>				
+			</div>
+			<n:i class='bx bx-chevron-right toggle'></n:i>
+		</n:header>
+		<n:ul class="nav-links">
+			<n:li>
+                <n:a href="#" onClick="dashboardMenuClick();">
+                    <n:i class='bx bx-grid' ></n:i>
+                    <n:span class="link_name">Dashboard</n:span>
+                </n:a>
+                <n:ul class="sub-menu blank">
+                    <n:li><n:a class="link_name" href="#" onClick="dashboardMenuClick();">Dashboard</n:a></n:li>
+                </n:ul>                				
+			</n:li>
+			<n:li>
+                <div class="icon-link">
+                    <n:a href="#">
+                        <n:i class='bx bx-collection' ></n:i>
+                        <n:span class="link_name">COA</n:span>
+                    </n:a>
+                    <n:i class='bx bx-chevron-down arrow' ></n:i>
+                </div>
+                <n:ul class="sub-menu">
+                    <n:li><n:a class="link_name" href="#">COA</n:a></n:li>
+                    <n:li><n:a href="#" onClick="coaTypeMenuClick();">Type</n:a></n:li>
+                    <n:li><n:a href="#" onClick="coaGroupMenuClick();">Group</n:a></n:li>
+                    <n:li><n:a href="#" onClick="coaSubAccount01Click();">SubAccount-01</n:a></n:li>
+                    <n:li><n:a href="#" onClick="coaSubAccount02Click();">SubAccount-02</n:a></n:li>
+                    <n:li><n:a href="#" onClick="coaMasterMenuClick();">Master</n:a></n:li>
+                </n:ul>                			
+			</n:li>
+            <n:li>
+				<div class="icon-link">	            
+	                <n:a href="#">
+	                    <n:i class='bx bx-compass' ></n:i>
+	                    <n:span class="link_name">Voucher</n:span>
+	                </n:a>
+	                <n:i class='bx bx-chevron-down arrow' ></n:i>
+				</div>
+				<n:ul class="sub-menu">
+					<n:li><n:a class="link_name" href="#">Voucher</n:a></n:li>
+					<n:li><n:a href="#" onClick="voucherGeneralMenuClick();">General</n:a></n:li>
+					<n:li><n:a href="#">PettyCash</n:a></n:li>                   
+				</n:ul>
+            </n:li>	
+			<n:li>
+                <div class="icon-link">
+                    <n:a href="#">
+                        <n:i class='bx bx-book-alt' ></n:i>
+                        <n:span class="link_name">GL</n:span>
+                    </n:a>
+                    <n:i class='bx bx-chevron-down arrow' ></n:i>
+                </div>
+				<n:ul class="sub-menu">
+					<n:li><n:a class="link_name" href="#">GL</n:a></n:li>
+					<n:li><n:a href="#" onClick="accountBalanceMenuClick();">Account Balance</n:a></n:li>
+					<n:li><n:a href="#" onClick="activityJournalMenuClick();">Journal Activities</n:a></n:li>
+				</n:ul>                 			
+			</n:li>
+            <n:li>
+            	<div class="icon-link">
+	                <n:a href="#">
+	                    <n:i class='bx bx-pie-chart-alt-2' ></n:i>
+	                    <n:span class="link_name">Report</n:span>
+	                </n:a>
+	                <n:i class='bx bx-chevron-down arrow' ></n:i>
+                </div>
+				<n:ul class="sub-menu">
+					<n:li><n:a class="link_name" href="#">Report</n:a></n:li>
+					<n:li><n:a href="#" onClick="trialBalanceMenuClick();">Trial Balance</n:a></n:li>
+					<n:li><n:a href="#" onClick="reportJournalMenuClick();">Jurnal</n:a></n:li>
+				</n:ul>
+            </n:li>
+			<n:li>
+                <div class="profile-details">
+                	<n:a href="#" onClick="profileClick();">
+	                    <div class="profile-content">
+	                        <n:img src="/zkau/web/img/profile1.jpg" alt="profile3"></n:img>
+	                    </div>
+	                    <div class="name-job">
+	                        <n:div class="profile-name">Sarah</n:div>
+	                        <n:div class="job">Chief Accountant</n:div>
+	                    </div>                	
+                	</n:a>
+                    <n:a href="/logout" onClick="logoutClick();">
+                    	<n:i class="bx bx-log-out"></n:i>
+                    </n:a>
+                </div>			
+			</n:li>
+		</n:ul>
+	</n:nav>
+	<hlayout>
+		<include id="mainInclude" hflex="1"></include>		
+	</hlayout>
+</window>
+<script defer="true" type="text/javascript" src="/zkau/web/js/main.js"></script>
+</zk>

@@ -1,0 +1,39 @@
+<?page title="Login" contentType="text/html;charset=UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="/zkau/web/css/style-login.css"?>
+<zk>
+<window id="loginWin" border="none" style="background-color: transparent;">
+	<html if="${not empty param.error}">
+		<div class="errorMsg">
+			<![CDATA[ 
+				Your login attempt was not successful, try again.
+				<br/>
+				Reason: ${SPRING_SECURITY_LAST_EXCEPTION.message} 
+			]]>
+		</div>			
+    </html>	
+	<html>
+		<div class="mainSec">
+			<h1>Login</h1>
+			<form id="f" name="f" action="/login" method="POST">
+				<div class="textSec">
+					<input type="text" id="username" name="username" placeholder=" "/>
+					<span></span>
+					<label for="username" class="placeholder">Username</label>				
+				</div>
+				<div class="textSec">
+					<input type="password" id="password" name="password" placeholder=" "/>
+					<span></span>
+					<label for="password" class="placeholder">Password</label>
+				</div>
+				<div class="checkboxSec">
+					<input type="checkbox" id="rememberme" name="remember-me"/> Remember Me				
+				</div>
+				<div class="actionSec">
+					<input type="submit" value="Login"/>			
+				</div>
+				<br/>
+			</form>					
+		</div>
+	</html>
+</window>
+</zk>

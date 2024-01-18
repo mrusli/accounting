@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+	
+		<!-- user -->
+		<mapping class="com.pyramix.domain.user.User"/>
+		<mapping class="com.pyramix.domain.user.UserRole"/>
+	
+		<!-- coa -->
+		<mapping class="com.pyramix.domain.coa.Coa_01_AccountType"/>
+		<mapping class="com.pyramix.domain.coa.Coa_02_AccountGroup"/>
+		<mapping class="com.pyramix.domain.coa.Coa_03_SubAccount01"/>
+		<mapping class="com.pyramix.domain.coa.Coa_04_SubAccount02"/>
+		<mapping class="com.pyramix.domain.coa.Coa_05_Master"/>
+
+		<!-- voucher -->
+		<mapping class="com.pyramix.domain.voucher.VoucherJournal"/>
+		<mapping class="com.pyramix.domain.voucher.VoucherJournalDebitCredit"/>
+		<mapping class="com.pyramix.domain.voucher.VoucherSerialNumber"/>
+	
+		<!-- gl -->
+		<mapping class="com.pyramix.domain.gl.GeneralLedger"/>
+		<mapping class="com.pyramix.domain.gl.Balance"/>
+	</session-factory>
+</hibernate-configuration>

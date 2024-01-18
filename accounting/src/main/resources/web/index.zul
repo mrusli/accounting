@@ -1,0 +1,42 @@
+<?link rel="stylesheet" type="text/css" href="/zkau/web/css/style-zk.css"?>
+<?page title="Index" contentType="text/html;charset=UTF-8"?>
+<zk>
+<window xmlns:n="native" border="none" sclass="mainWindow">
+	<grid sclass="mainGrid">
+		<rows>
+			<row>
+				<cell width="10%">
+					ZK Version:		
+				</cell>
+				<cell>
+					<label value="${session.webApp.version}"></label>
+				</cell>
+			</row>
+			<row>
+				<cell>
+					AppName:
+				</cell>
+				<cell>
+					<label value="${session.webApp.appName}"></label>
+				</cell>
+			</row>
+			<row>
+				<cell>
+					Build:
+				</cell>
+				<cell>
+					<label value="${session.webApp.build}"></label>
+				</cell>
+			</row>
+			<row>
+				<cell>
+					<n:a href="/login" >Login</n:a>
+				</cell>
+				<cell>
+							
+				</cell>
+			</row>
+		</rows>
+	</grid>
+</window>
+</zk>
