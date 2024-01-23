@@ -70,7 +70,28 @@ public class BalanceHibernate extends DaoHibernate implements BalanceDao {
 	}	
 	
 	@Override
-	public List<Balance> findAccountBalanceByCoa_ClosingDate(Coa_05_Master coa, Date closingDate) throws Exception {
+	public List<Balance> findAccountBalanceBy_ClosingDate(Date closingDate) throws Exception {
+		Session session = super.getSessionFactory().openSession();
+		
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<Balance> criteriaQuery = criteriaBuilder.createQuery(Balance.class);
+		Root<Balance> root = criteriaQuery.from(Balance.class);
+		criteriaQuery.select(root).where(
+				criteriaBuilder.equal(root.get("closingDate"), closingDate));
+		
+		try {
+			
+			return session.createQuery(criteriaQuery).getResultList();
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			session.close();
+		}
+	}	
+	
+	@Override
+	public Balance findAccountBalanceByCoa_ClosingDate(Coa_05_Master coa, Date closingDate) throws Exception {
 		Session session = super.getSessionFactory().openSession();
 		
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -82,7 +103,7 @@ public class BalanceHibernate extends DaoHibernate implements BalanceDao {
 		
 		try {
 			
-			return session.createQuery(criteriaQuery).getResultList();
+			return session.createQuery(criteriaQuery).getSingleResult();
 			
 		} catch (Exception e) {
 			throw e;

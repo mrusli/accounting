@@ -95,6 +95,8 @@
 	<bean id="trialBalanceReportController" class="com.pyramix.web.report.TrialBalanceReportController" scope="prototype" parent="basisController">
 		<property name="balanceDao" ref="balanceDao"></property>
 		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>
+		<property name="trialBalanceDao" ref="trialBalanceDao"></property>
 	</bean>
 	
 	<bean id="journalReportController" class="com.pyramix.web.report.JournalReportController" scope="prototype" parent="basisController">

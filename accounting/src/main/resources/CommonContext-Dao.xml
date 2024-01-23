@@ -60,5 +60,11 @@
     <bean id="balanceDao" class="com.pyramix.persistence.gl.dao.hibernate.BalanceHibernate">
     	<property name="sessionFactory" ref="sessionFactory"></property>
     </bean>    
-        
+
+	<!-- Report -->
+	
+	<bean id="trialBalanceDao" class="com.pyramix.persistence.report.hibernate.TrialBalanceHibernate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
 </beans>

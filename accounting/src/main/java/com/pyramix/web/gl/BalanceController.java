@@ -62,27 +62,33 @@ public class BalanceController extends GFCBaseController {
 		// get all the assets, liabilities, and capital accounts from CoaMaster
 		coaMasterList = getCoa_05_AccountMasterDao().findAllCoa_05_Master();
 		
+		// get all account balances and create new ones if not existed
+		processAccountBalance();
+				
+		// list Account Balance
+		listAccountBalance();
+	}
+
+	private void processAccountBalance() throws Exception {
 		// get existing account balances
-		balanceList = getBalanceDao().findAllAccountBalance();
+		balanceList = getBalanceDao().findAccountBalanceBy_ClosingDate(endDatebox.getValue());
 		
 		// check whether all of the accounts already in the balance table
 		// --for each of the accounts not in the balance table, create a balance row
 		Balance balance=null;
 		for (Coa_05_Master coaMaster : coaMasterList) {
 			// ONLY assets, liabilities, and capital accounts 
-			if (coaMaster.getTypeCoaNumber()<4) {				
+			// if (coaMaster.getTypeCoaNumber()<4) {				
 				try {
-					balance = getBalanceDao().findAccountBalanceByCoa(coaMaster);									
+					balance = getBalanceDao()
+							.findAccountBalanceByCoa_ClosingDate(coaMaster, endDatebox.getValue());					
 				} catch (NoResultException e) {
 					// create a new accountbalance and add to list of account balance
 					balance = createAccountBalance(coaMaster);
 					balanceList.add(balance);
 				}
-			}			
+			// }			
 		}
-				
-		// list Account Balance
-		listAccountBalance();
 	}
 
 	private void setClosingStartAndEndDate() {
@@ -121,7 +127,22 @@ public class BalanceController extends GFCBaseController {
 		BigDecimal debitTotal = BigDecimal.ZERO;
 		
 		List<GeneralLedger> glList = 
-				getGeneralLedgerDao().findAllGeneralLedgerByCoaMaster(coaMaster);
+				getGeneralLedgerDao().findAllGeneralLedgerByCoaMaster(
+						coaMaster, startDatebox.getValue(), endDatebox.getValue());
+		
+		// find balance amount from previous month
+		LocalDate prevEndDate = endDatebox.getValueInLocalDate().minusMonths(1);
+		log.info("End Date: "+endDatebox.getValue());
+		log.info("PreviousMonth: "+prevEndDate);
+		// getting the previous month balance amount
+		BigDecimal prevBalanceAmount = BigDecimal.ZERO; 
+		try {
+			Balance balanceAccount = getBalanceDao()
+					.findAccountBalanceByCoa_ClosingDate(coaMaster, asDate(prevEndDate, zoneId));
+			prevBalanceAmount = balanceAccount.getBalanceAmount();
+		} catch (NoResultException e) {
+			log.info("No previous month closing balance.  Previous month closing balance set 0 (zero).");
+		}
 		
 		for (GeneralLedger gl : glList) {
 			creditTotal = creditTotal.add(gl.getCreditAmount());
@@ -130,10 +151,10 @@ public class BalanceController extends GFCBaseController {
 
 		if (coaMaster.isCreditAccount()) {
 			// all credit minus debit
-			balanceAmount = creditTotal.subtract(debitTotal);
+			balanceAmount = creditTotal.add(prevBalanceAmount).subtract(debitTotal);
 		} else {
 			// all debit minus all credit
-			balanceAmount = debitTotal.subtract(creditTotal);
+			balanceAmount = debitTotal.add(prevBalanceAmount).subtract(creditTotal);
 		}			
 		
 		// set ledger db/cr total
@@ -200,7 +221,7 @@ public class BalanceController extends GFCBaseController {
 					Datebox datebox = new Datebox();
 					datebox.setWidth("130px");
 					datebox.setLocale(getLocale());
-					datebox.setValue(asDate(todayDate, zoneId));
+					datebox.setValue(endDatebox.getValue());
 					datebox.setParent(listcell);
 				} else {
 					listcell.setLabel(dateToStringDisplay(asLocalDate(acctBalance.getClosingDate()),
@@ -240,7 +261,12 @@ public class BalanceController extends GFCBaseController {
 					
 					@Override
 					public void onEvent(Event event) throws Exception {
-						log.info("Save button click...");													
+						log.info("Save button click...");
+						// get the closing date from user's date selection
+						Datebox datebox =
+								(Datebox) listcell.getParent().getChildren().get(0).getFirstChild();
+						acctBalance.setClosingDate(datebox.getValue());
+						log.info(acctBalance.toString());
 						// save
 						getBalanceDao().save(acctBalance);
 						// re-list
@@ -274,6 +300,14 @@ public class BalanceController extends GFCBaseController {
 				};
 			}			
 		};
+	}
+	
+	public void onClick$findAccountBalanceButton(Event event) throws Exception {
+		// get all account balances and create new ones if not existed
+		processAccountBalance();
+				
+		// list Account Balance
+		listAccountBalance();		
 	}
 
 	public GeneralLedgerDao getGeneralLedgerDao() {

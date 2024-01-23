@@ -6,20 +6,30 @@
 		<div style="margin-top: 10px; margin-left: 10px;">
 			<div class="list-header" style="height:60px; width: 1205px">
 				<div class="list-header-content">
-					<n:span>Report Start Date:</n:span>
+					<n:span class="text">Report Start Date:</n:span>
 					<datebox id="startDatebox"></datebox>					
-					<n:span>Report End Date:</n:span>
-					<datebox id="endDatebox"></datebox>					
+					<n:span class="text">Report End Date:</n:span>
+					<datebox id="endDatebox"></datebox>
+					<button id="findTrialBalanceButton" label="Find"></button>					
 				</div>
 			</div>
-			<listbox id="trialBalanceListbox" mold="paging" height="500px" width="1205px" pageSize="7">
+			<tabbox id="coaTabbox" class="tabbox-listbox" width="1205px">
+			</tabbox>
+			<listbox id="trialBalanceListbox" class="listbox-tabbox" mold="paging" height="500px" width="1205px" pageSize="6">
 				<listhead>
 					<listheader label="Chart of Account" width="320px"/>
 					<listheader label="Account No" width="160px"/>
-					<listheader label="Total Debit(Rp.)" width="160px" align="right"/>
-					<listheader label="Total Credit(Rp.)" width="160px" align="right"/>
+					<listheader label="Debit(Rp.)" width="160px" align="right"/>
+					<listheader label="Credit(Rp.)" width="160px" align="right"/>
 					<listheader />
 				</listhead>
+				<listfoot>
+					<listfooter></listfooter>
+					<listfooter></listfooter>
+					<listfooter align="right"></listfooter>
+					<listfooter align="right"></listfooter>
+					<listfooter/>
+				</listfoot>				
 			</listbox>			
 		</div>		
 	</n:section>

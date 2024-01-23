@@ -24,5 +24,8 @@
 		<!-- gl -->
 		<mapping class="com.pyramix.domain.gl.GeneralLedger"/>
 		<mapping class="com.pyramix.domain.gl.Balance"/>
+		
+		<!-- report -->
+		<mapping class="com.pyramix.domain.report.TrialBalance"/>
 	</session-factory>
 </hibernate-configuration>

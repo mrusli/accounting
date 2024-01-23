@@ -6,10 +6,11 @@
 		<div style="margin-top: 10px; margin-left: 10px;">
 			<div class="list-header" style="margin-left: 10px; height:60px; width: 1205px">
 				<div class="list-header-content">
-					<n:span>Journal Start Date:</n:span>
+					<n:span class="text">Journal Start Date:</n:span>
 					<datebox id="startDatebox"></datebox>					
-					<n:span>Journal End Date:</n:span>
-					<datebox id="endDatebox"></datebox>					
+					<n:span class="text">Journal End Date:</n:span>
+					<datebox id="endDatebox"></datebox>
+					<button id="findAccountBalanceButton" label="Find"></button>					
 				</div>
 			</div>
 			<listbox id="accountBalanceListbox" mold="paging" height="500px" width="1205px" pageSize="7">

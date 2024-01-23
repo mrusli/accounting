@@ -47,11 +47,18 @@ public interface BalanceDao {
 	public Balance findAccountBalanceByCoa(Coa_05_Master coa) throws Exception;
 		
 	/**
-	 * @param coa
 	 * @param closingDate
 	 * @return {@link List} of {@link Balance}
 	 * @throws Exception
 	 */
-	public List<Balance> findAccountBalanceByCoa_ClosingDate(Coa_05_Master coa, Date closingDate) throws Exception;
+	public List<Balance> findAccountBalanceBy_ClosingDate(Date closingDate) throws Exception;	
+	
+	/**
+	 * @param coa
+	 * @param closingDate
+	 * @return {@link Balance}
+	 * @throws Exception
+	 */
+	public Balance findAccountBalanceByCoa_ClosingDate(Coa_05_Master coa, Date closingDate) throws Exception;
 	
 }
