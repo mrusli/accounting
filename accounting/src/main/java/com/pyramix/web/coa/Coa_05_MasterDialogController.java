@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
@@ -28,6 +29,7 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 	
 	private Window coa_05_MasterDialogWin;
 	private Listbox coa_05_MasterListbox;
+	private Label statusLabel;
 	
 	private List<Coa_05_Master> coaMasterList;
 	private ListModelList<Coa_05_Master> coaMasterListModelList;
@@ -44,6 +46,9 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 
 	public void onCreate$coa_05_MasterDialogWin(Event event) throws Exception {
 		log.info("coa_05_MasterDialogWin created.");
+		
+		// reset status
+		statusLabel.setValue("[Select] Click COA to select");
 		
 		listCoaMaster();
 	}
@@ -77,6 +82,17 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 				item.setValue(master);
 			}
 		};
+	}
+	
+	public void onSelect$coa_05_MasterListbox(Event event) throws Exception {
+		Listitem item = coa_05_MasterListbox.getSelectedItem();
+		Coa_05_Master master = item.getValue();
+		log.info("Selected: "+master.getMasterCoaComp()+"-"
+				+master.getMasterCoaName());
+		
+		statusLabel.setValue("[Select] "+master.getMasterCoaComp()+"-"
+				+master.getMasterCoaName()+" "
+				+"Selected");
 	}
 
 	public void onClick$selectButton(Event event) throws Exception {

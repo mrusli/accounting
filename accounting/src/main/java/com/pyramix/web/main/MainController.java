@@ -19,8 +19,8 @@ public class MainController extends GFCBaseController {
 	
 	public MainController() {
 		super();
-
-		log.info("MainController created...");	
+		
+		log.info("MainController created...");
 	}
 
 	public void onCreate$mainWin(Event event) throws Exception {

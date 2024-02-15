@@ -47,6 +47,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 	private ListModelList<VoucherJournalDebitCredit> listModelList;
 	private ZoneId zoneId = getZoneId();
 	private LocalDate todayDate = getLocalDate(zoneId);
+	private BigDecimal totalDebit = BigDecimal.ZERO;
+	private BigDecimal totalCredit = BigDecimal.ZERO;
 	
 	private String[] coaSelectRef = {"enable", "disable"};
 	private String coaSelect;
@@ -226,7 +228,6 @@ public class VoucherJournalDialogController extends GFCBaseController {
 						decimalbox.setValue(dialogData.isCredit() ? BigDecimal.ZERO : dialogData.getAmount()); 
 					}
 					decimalbox.setParent(listcell);	
-				// } else if (dialogData.getDataState().equals(dialogData.getDataStateDef()[1])) {
 			
 				} else {
 					listcell.setLabel(toDecimalFormat(dbcr.getDebitAmount(), getLocale(), "###.###.###,-"));					
@@ -250,7 +251,6 @@ public class VoucherJournalDialogController extends GFCBaseController {
 						decimalbox.setValue(dialogData.isCredit() ? dialogData.getAmount() : BigDecimal.ZERO);
 					}
 					decimalbox.setParent(listcell);						
-				// } else if (dialogData.getDataState().equals(dialogData.getDataStateDef()[1])) {
 				
 				} else {
 					listcell.setLabel(toDecimalFormat(dbcr.getCreditAmount(), getLocale(), "###.###.###,-"));					
@@ -296,26 +296,33 @@ public class VoucherJournalDialogController extends GFCBaseController {
 	}
 
 	public void onAfterRender$dbcrListbox(Event event) throws Exception {
+		if (dialogData.getVoucherJournalDebitCredit()==null) {
+			displayTotalDbCr(BigDecimal.ZERO, BigDecimal.ZERO);
+		} else {
+			calcTotalDbCr();
+			displayTotalDbCr(totalDebit, totalCredit);
+		}
+	}
+	
+	public void calcTotalDbCr() {
+		totalDebit = BigDecimal.ZERO;
+		totalCredit = BigDecimal.ZERO;
+		
+		for (VoucherJournalDebitCredit dbcr : dialogData.getVoucherJournalDebitCredit()) {
+			totalDebit = totalDebit.add(dbcr.getDebitAmount());
+			totalCredit = totalCredit.add(dbcr.getCreditAmount());
+		}
+		log.info("Debit Amount: "+totalDebit);
+		log.info("Credit Amount: "+totalCredit);
+	}
+	
+	public void displayTotalDbCr(BigDecimal totalDebit, BigDecimal totalCredit) throws Exception {
 		Listfooter listfooterDb, listfooterCr;
 		listfooterDb = (Listfooter) dbcrListbox.getListfoot().getChildren().get(2);
 		listfooterCr = (Listfooter) dbcrListbox.getListfoot().getChildren().get(3);
-		
-		if (dialogData.getVoucherJournalDebitCredit()==null) {
-			listfooterDb.setLabel("0,-");
-			listfooterCr.setLabel("0,-");
-		} else {
-			BigDecimal totalDebit = BigDecimal.ZERO;
-			BigDecimal totalCredit = BigDecimal.ZERO;
-			
-			for (VoucherJournalDebitCredit dbcr : dialogData.getVoucherJournalDebitCredit()) {
-				// log.info("Debit Amount: "+dbcr.getDebitAmount());
-				totalDebit = totalDebit.add(dbcr.getDebitAmount());
-				totalCredit = totalCredit.add(dbcr.getCreditAmount());
-			}
-			
-			listfooterDb.setLabel(toDecimalFormat(totalDebit, getLocale(), "###.###.###,-"));
-			listfooterCr.setLabel(toDecimalFormat(totalCredit, getLocale(), "###.###.###,-"));
-		}
+
+		listfooterDb.setLabel(toDecimalFormat(totalDebit, getLocale(), "###.###.###,-"));
+		listfooterCr.setLabel(toDecimalFormat(totalCredit, getLocale(), "###.###.###,-"));
 	}
 	
 	
@@ -365,15 +372,15 @@ public class VoucherJournalDialogController extends GFCBaseController {
 			// listcellCoa.removeEventListener(Events.ON_CLICK, coaClickListnener);
 			
 			Textbox textboxDescription = (Textbox) item.getChildren().get(1).getFirstChild();
-			log.info(textboxDescription);
+			// log.info(textboxDescription);
 			textboxDescription.setDisabled(true);
 			
 			Decimalbox decimalboxDebit = (Decimalbox) item.getChildren().get(2).getFirstChild();
-			log.info(decimalboxDebit);
+			// log.info(decimalboxDebit);
 			decimalboxDebit.setDisabled(true);
 			
 			Decimalbox decimalboxCredit = (Decimalbox) item.getChildren().get(3).getFirstChild();
-			log.info(decimalboxCredit);
+			// log.info(decimalboxCredit);
 			decimalboxCredit.setDisabled(true);
 			
 			Button buttonModify = (Button) item.getChildren().get(4).getFirstChild();
