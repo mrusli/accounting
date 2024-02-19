@@ -72,6 +72,11 @@ public class VoucherJournalDialogController extends GFCBaseController {
 		listVoucherJournalDebitCredits();
 	}
 	
+	private void resetStatusLabel() {
+		statusLabel.setValue("[Data-Entry] Enter the required data for this transaction. You can enter up to 4 rows of debit-credit.");		
+		statusLabel.setStyle("color:var(--color-info-dark);");
+	}
+	
 	private void listVoucherJournalDebitCredits() {
 		listModelList = new ListModelList<VoucherJournalDebitCredit>();
 		if (dialogData.getVoucherJournalDebitCredit()==null) {
@@ -79,7 +84,6 @@ public class VoucherJournalDialogController extends GFCBaseController {
 			listModelList.add(new VoucherJournalDebitCredit());
 			listModelList.add(new VoucherJournalDebitCredit());			
 
-			statusLabel.setValue("[Data-Entry] Enter the required data for this transaction. You can enter up to 4 rows of debit-credit.");		
 		} else {
 			log.info("populate the listbox...");
 			List<VoucherJournalDebitCredit> voucherJournalDebitCreditList =
@@ -99,7 +103,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 
 				listModelList.addAll(voucherJournalDebitCreditList);
 
-				statusLabel.setValue("[Data-Entry] Enter the required data for this transaction. You can enter up to 4 rows of debit-credit.");
+				// statusLabel.setValue("[Data-Entry] Enter the required data for this transaction. You can enter up to 4 rows of debit-credit.");
+				resetStatusLabel();
 			}
 		}
 		
@@ -134,6 +139,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 				// mod
 				lc = initModify(new Listcell(), dbcr);
 				lc.setParent(item);
+				
+				item.setValue(dbcr);
 			}
 
 			private Listcell initCOA(Listcell listcell, VoucherJournalDebitCredit dbcr) {				
@@ -164,6 +171,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 					public void onEvent(Event event) throws Exception {
 						if (coaSelect.equals(coaSelectRef[0])) {
 							log.info("allow to select coa...");
+							// reset status
+							resetStatusLabel();
 							// get the credit(Rp.) amount
 							Decimalbox creditDecimalbox = 
 									(Decimalbox) listcell.getParent().getChildren().get(3).getFirstChild();
@@ -201,6 +210,7 @@ public class VoucherJournalDialogController extends GFCBaseController {
 					Textbox textbox = new Textbox();
 					textbox.setValue(dialogData.getTransactionDescription());
 					textbox.setWidth("280px");
+					textbox.setConstraint("no empty: Please provide the description");
 					textbox.setParent(listcell);
 				// } else if (dialogData.getDataState().equals(dialogData.getDataStateDef()[1])) {
 				//	Textbox textbox = new Textbox();
@@ -219,6 +229,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 						(dialogData.getDataState().equals(dialogData.getDataStateDef()[1]))) {
 					Decimalbox decimalbox = new Decimalbox();
 					decimalbox.setWidth("110px");
+					decimalbox.setStyle("text-align: right;");
+					decimalbox.setConstraint("no empty: Please provide debit amount. Minimal 0 (zero) amount.");
 					decimalbox.setLocale(getLocale());
 					// Debit or Credit amount? if checked then it's to put the nominal into Credit column
 					//   else into debit column
@@ -242,6 +254,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 						(dialogData.getDataState().equals(dialogData.getDataStateDef()[1]))) {
 					Decimalbox decimalbox = new Decimalbox();
 					decimalbox.setWidth("110px");
+					decimalbox.setStyle("text-align: right;");
+					decimalbox.setConstraint("no empty: Please provide credit amount. Minimal 0 (zero) amount.");
 					decimalbox.setLocale(getLocale());
 					// Debit or Credit amount? if checked then it's to put the nominal into Credit column
 					//   else into debit column
@@ -283,7 +297,8 @@ public class VoucherJournalDialogController extends GFCBaseController {
 						creditDecimalbox.setDisabled(false);
 						
 						// change the status label
-						statusLabel.setValue("[Data-Entry] Enter the required data for this transaction. You can enter up to 4 rows of debit-credit.");
+						// statusLabel.setValue("[Data-Entry] Enter the required data for this transaction. You can enter up to 4 rows of debit-credit.");
+						resetStatusLabel();
 						
 						// change the button label
 						checkAndSaveButton.setLabel("Check"); 
@@ -299,16 +314,19 @@ public class VoucherJournalDialogController extends GFCBaseController {
 		if (dialogData.getVoucherJournalDebitCredit()==null) {
 			displayTotalDbCr(BigDecimal.ZERO, BigDecimal.ZERO);
 		} else {
-			calcTotalDbCr();
+			dialogData.getVoucherJournalDebitCredit().forEach(
+					dbcr -> log.info(dbcr.toString()));
+			calcTotalDbCr(
+					dialogData.getVoucherJournalDebitCredit());
 			displayTotalDbCr(totalDebit, totalCredit);
 		}
 	}
 	
-	public void calcTotalDbCr() {
+	public void calcTotalDbCr(List<VoucherJournalDebitCredit> dbcrList) {
 		totalDebit = BigDecimal.ZERO;
 		totalCredit = BigDecimal.ZERO;
 		
-		for (VoucherJournalDebitCredit dbcr : dialogData.getVoucherJournalDebitCredit()) {
+		for (VoucherJournalDebitCredit dbcr : dbcrList) {
 			totalDebit = totalDebit.add(dbcr.getDebitAmount());
 			totalCredit = totalCredit.add(dbcr.getCreditAmount());
 		}
@@ -325,17 +343,29 @@ public class VoucherJournalDialogController extends GFCBaseController {
 		listfooterCr.setLabel(toDecimalFormat(totalCredit, getLocale(), "###.###.###,-"));
 	}
 	
+	public void onClick$addButton(Event event) throws Exception {
+		if (listModelList.size()<4) {
+			log.info("add new debit-credit");
+			listModelList.add(new VoucherJournalDebitCredit());			
+		}
+	}
 	
 	public void onClick$checkAndSaveButton(Event event) throws Exception {
 		if (checkAndSaveButton.getLabel().compareTo("Close")==0) {
 			voucherJournalDialogWin.detach();
 		} else if (checkAndSaveButton.getLabel().compareTo("Check")==0) {
-			// total up the debit and credit columns
-			
-			
+			// reset status
+			resetStatusLabel();
 			// check all data have been filled-up
-			
+			checkNewVoucherJournalDebitCredits();				
+			// total up the debit and credit columns
+			calcTotalDbCr(getNewVoucherJournalDebitCredits());
+			// display total dbcr
+			displayTotalDbCr(totalDebit, totalCredit);	
 			// check whether debit == credit?
+			checkDebitCreditEqualAmount();
+			// check whether debit or credit amount equals to transaction amount
+			checkDebitCreditEqualTransactionAmount();
 			
 			// make all data READ-ONLY and enable the Modify button
 			switchToReadOnly();
@@ -363,6 +393,35 @@ public class VoucherJournalDialogController extends GFCBaseController {
 			Events.sendEvent(new Event("onDbCrCompleted", voucherJournalDialogWin, dbcrList));
 			
 			voucherJournalDialogWin.detach();
+		}
+	}
+
+	private void checkNewVoucherJournalDebitCredits() throws Exception {
+		for (Listitem item : dbcrListbox.getItems()) {
+			// COA
+			Listcell listcellCoa = (Listcell) item.getChildren().get(0);
+			if (listcellCoa.getValue()==null) {
+				statusLabel.setValue("[ERROR] COA not completed. Select COA and check again.");
+				statusLabel.setStyle("color: red;");
+				throw new Exception("COA Not Completed");
+			}			
+		}
+	}
+
+	private void checkDebitCreditEqualAmount() throws Exception {
+		if (totalDebit.compareTo(totalCredit)!=0) {
+			statusLabel.setValue("[ERROR] Debit-Credit not balanced. Re-enter the debit/credit amount and check again.");
+			statusLabel.setStyle("color: red;");			
+			throw new Exception("Debit-Credit not balanced");
+		}
+	}	
+	
+	private void checkDebitCreditEqualTransactionAmount() throws Exception {
+		if ((totalDebit.compareTo(dialogData.getAmount())!=0) || 
+				(totalCredit.compareTo(dialogData.getAmount())!=0)) {
+			statusLabel.setValue("[ERROR] Debit or Credit Amount not the same as the Transaction amount.");
+			statusLabel.setStyle("color: red;");						
+			throw new Exception("Debit or Credit Amount not the same as the Transaction amount");
 		}
 	}
 

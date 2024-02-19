@@ -77,12 +77,11 @@ public interface Coa_05_AccountMasterDao {
 	 */
 	public Coa_05_Master findCoa_04_SubAccount02_ByProxy(long id) throws Exception;	
 
-	/**
-	 * @param creditAccount 
+	/** 
 	 * @return {@link List} of {@link Coa_05_Master}
 	 * @throws Exception
 	 */
-	public List<Coa_05_Master> find_ActiveOnly_Coa_05_Master_OrderBy_MasterCoaComp(boolean creditAccount) throws Exception;
+	public List<Coa_05_Master> find_ActiveOnly_Coa_05_Master_OrderBy_MasterCoaComp() throws Exception;
 	
 	/**
 	 * @param coaAccountType

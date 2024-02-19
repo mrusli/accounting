@@ -1,10 +1,12 @@
 <?page title="COA" contentType="text/html;charset=UTF-8"?>
 <zk>
-<window id="coa_05_MasterDialogWin" height="440px" apply="${coa_05_MasterDialogControl}">
-	<listbox id="coa_05_MasterListbox" mold="paging" height="300px" width="360px" pageSize="5">
+<window id="coa_05_MasterDialogWin" height="500px" apply="${coa_05_MasterDialogControl}">
+	<tabbox id="coaTabbox" class="tabbox-listbox" width="520px">
+	</tabbox>
+	<listbox id="coa_05_MasterListbox" class="listbox-tabbox" mold="paging" height="300px" width="520px" pageSize="5">
 		<listhead>
 			<listheader label="No.COA" width="80px"/>
-			<listheader label="Nama" width="220px"/>
+			<listheader label="Nama" width="420px"/>
 		</listhead>
 	</listbox>
 	<div class="list-footer">

@@ -12,9 +12,14 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Window;
 
+import com.pyramix.domain.coa.Coa_01_AccountType;
 import com.pyramix.domain.coa.Coa_05_Master;
+import com.pyramix.persistence.coa.dao.Coa_01_AccountTypeDao;
 import com.pyramix.persistence.coa.dao.Coa_05_AccountMasterDao;
 import com.pyramix.web.common.GFCBaseController;
 
@@ -26,14 +31,16 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 	private static final long serialVersionUID = -304354700323146562L;
 
 	private Coa_05_AccountMasterDao coa_05_AccountMasterDao;
+	private Coa_01_AccountTypeDao coa_01_AccountTypeDao;
 	
 	private Window coa_05_MasterDialogWin;
 	private Listbox coa_05_MasterListbox;
 	private Label statusLabel;
+	private Tabbox coaTabbox;
 	
 	private List<Coa_05_Master> coaMasterList;
 	private ListModelList<Coa_05_Master> coaMasterListModelList;
-	private boolean creditAccount;
+	private Coa_01_AccountType accountTypeSelected;
 	
 	private static final Logger log = Logger.getLogger(Coa_05_MasterDialogController.class);
 	
@@ -41,7 +48,8 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		
-		creditAccount = (boolean) arg.get("creditAccount");
+		// as of 18/02/2024 - not passing boolean value creditAccount anymore
+		// creditAccount = (boolean) arg.get("creditAccount");
 	}
 
 	public void onCreate$coa_05_MasterDialogWin(Event event) throws Exception {
@@ -50,13 +58,36 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 		// reset status
 		statusLabel.setValue("[Select] Click COA to select");
 		
+		// setup account type selection
+		setupCoaTypeTabbox();
+		
+		// list the coaMaster - with 1st selected tab
 		listCoaMaster();
 	}
 	
-	private void listCoaMaster() throws Exception {
-		coaMasterList = 
-				getCoa_05_AccountMasterDao().find_ActiveOnly_Coa_05_Master_OrderBy_MasterCoaComp(creditAccount);
+	private void setupCoaTypeTabbox() throws Exception {
+		Tabs tabs = new Tabs();
+		tabs.setParent(coaTabbox);
 		
+		List<Coa_01_AccountType> accountTypeList =
+				getCoa_01_AccountTypeDao().findAllCoa_01_AccountType();
+		Tab tab;
+		for (Coa_01_AccountType accountType : accountTypeList) {
+			tab = new Tab();
+			tab.setLabel(accountType.getAccountTypeName());
+			tab.setValue(accountType);
+			tab.setParent(tabs);
+		}
+		
+		// selected 1st tab
+		accountTypeSelected =
+				coaTabbox.getSelectedTab().getValue();
+	}
+
+	private void listCoaMaster() throws Exception {
+		coaMasterList = getCoa_05_AccountMasterDao()
+				.find_ActiveOnly_Coa_05_Master_by_AccountType(accountTypeSelected.getAccountTypeNumber());
+				
 		coaMasterListModelList = new ListModelList<Coa_05_Master>(coaMasterList);
 		
 		coa_05_MasterListbox.setModel(coaMasterListModelList);
@@ -82,6 +113,14 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 				item.setValue(master);
 			}
 		};
+	}
+	
+	public void onSelect$coaTabbox(Event event) throws Exception {
+		accountTypeSelected =
+				coaTabbox.getSelectedTab().getValue();
+		log.info("AccountType selected: "+accountTypeSelected.getAccountTypeName());
+		
+		listCoaMaster();
 	}
 	
 	public void onSelect$coa_05_MasterListbox(Event event) throws Exception {
@@ -118,5 +157,13 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 
 	public void setCoa_05_AccountMasterDao(Coa_05_AccountMasterDao coa_05_AccountMasterDao) {
 		this.coa_05_AccountMasterDao = coa_05_AccountMasterDao;
+	}
+
+	public Coa_01_AccountTypeDao getCoa_01_AccountTypeDao() {
+		return coa_01_AccountTypeDao;
+	}
+
+	public void setCoa_01_AccountTypeDao(Coa_01_AccountTypeDao coa_01_AccountTypeDao) {
+		this.coa_01_AccountTypeDao = coa_01_AccountTypeDao;
 	}
 }

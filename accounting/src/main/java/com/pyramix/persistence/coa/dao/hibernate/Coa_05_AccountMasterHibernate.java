@@ -143,7 +143,7 @@ public class Coa_05_AccountMasterHibernate extends DaoHibernate implements Coa_0
 	}
 	
 	@Override
-	public List<Coa_05_Master> find_ActiveOnly_Coa_05_Master_OrderBy_MasterCoaComp(boolean creditAccount) throws Exception {
+	public List<Coa_05_Master> find_ActiveOnly_Coa_05_Master_OrderBy_MasterCoaComp() throws Exception {
 		Session session = super.getSessionFactory().openSession();
 		
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

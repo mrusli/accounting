@@ -56,6 +56,7 @@
 	
 	<bean id="coa_05_MasterDialogControl" class="com.pyramix.web.coa.Coa_05_MasterDialogController" scope="prototype" parent="basisController">
 		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>
 	</bean>
 	
 	<!-- SerialNumber -->
@@ -100,6 +101,12 @@
 	</bean>
 	
 	<bean id="journalReportController" class="com.pyramix.web.report.JournalReportController" scope="prototype" parent="basisController">
+	
+	</bean>
+	
+	<!-- Error -->
+	
+	<bean id="errorController" class="com.pyramix.web.error.ErrorController" scope="prototype" parent="basisController">
 	
 	</bean>		
 </beans>
