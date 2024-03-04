@@ -1,7 +1,5 @@
 package com.pyramix.web.security;
 
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,14 +10,8 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig {
@@ -66,7 +58,6 @@ public class SecurityConfig {
                         .loginPage("/login").permitAll()
                         .defaultSuccessUrl("/success", true)
                         .failureUrl("/login?error=true"))
-                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessHandler(logoutSusccessHandler()))
                 .rememberMe(me -> me.key("secretkey"));
         http
         	.headers(headers -> headers
@@ -77,22 +68,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-	private LogoutSuccessHandler logoutSusccessHandler() {
-		
-		return new LogoutSuccessHandler() {
-			
-			@Override
-			public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-					throws IOException, ServletException {
-				
-				log.info("Logout : "+authentication.getName());
-				
-				response.sendRedirect("/");
-				
-			}
-		};
-	}
 
 	@Bean
 	protected AuthenticationProvider authenticationProvider() {

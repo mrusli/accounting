@@ -1,0 +1,7 @@
+<div xmlns:n="native" id="profilePanel" apply="${profileController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">My Profile</n:span>
+		</div>
+	</n:section>
+</div>

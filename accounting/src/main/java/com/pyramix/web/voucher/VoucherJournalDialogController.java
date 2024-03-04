@@ -54,6 +54,7 @@ public class VoucherJournalDialogController extends GFCBaseController {
 	private String coaSelect;
 	
 	private static final Logger log = Logger.getLogger(VoucherJournalDialogController.class);
+	private static final int MAX_ROW = 4;
 
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
@@ -344,7 +345,7 @@ public class VoucherJournalDialogController extends GFCBaseController {
 	}
 	
 	public void onClick$addButton(Event event) throws Exception {
-		if (listModelList.size()<4) {
+		if (listModelList.size()<MAX_ROW) {
 			log.info("add new debit-credit");
 			listModelList.add(new VoucherJournalDebitCredit());			
 		}
