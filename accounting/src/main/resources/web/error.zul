@@ -2,8 +2,8 @@
 <zk>
 <window id="errorWindow" title="Error" width="50%" border="normal" mode="modal" closable="true" apply="${errorController}">
 <vlayout>
-	ERROR!!! - ${requestScope['javax.servlet.error.status_code']}
-	<label multiline="true" value="Message:  ${requestScope['javax.servlet.error.message']}"></label>
+	ERROR!!! - ${requestScope['jakarta.servlet.error.status_code']}
+	<label multiline="true" value="Message:  ${requestScope['jakarta.servlet.error.message']}"></label>
 	<hlayout style="margin-left:auto; margin-right:auto; padding-bottom: 10px;">
 		<button label="Continue" onClick="spaceOwner.detach()"/>
 		<button label="Reload" onClick="Executions.sendRedirect(null)"/>

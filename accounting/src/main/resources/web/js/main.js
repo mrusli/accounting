@@ -42,6 +42,9 @@ function voucherGeneralMenuClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickVoucherGeneralMenu', 'VoucherGeneral...'));		
 }
 /************************GL************************/
+function generalLedgerMenuClick() {
+	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickGeneralLedgerMenu', 'General Ledger...'));		
+}
 function activityJournalMenuClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickActivityJournalMenu', 'ActivityJournal...'));	
 }

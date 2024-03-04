@@ -1,18 +1,11 @@
 package com.pyramix.web.main;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Include;
-import org.zkoss.zul.Window;
 
-import com.pyramix.domain.voucher.VoucherType;
 import com.pyramix.web.common.GFCBaseController;
-import com.pyramix.web.voucher.VoucherJournalDialogData;
 
 public class MainController extends GFCBaseController {
 	/**
@@ -21,7 +14,7 @@ public class MainController extends GFCBaseController {
 	private static final long serialVersionUID = 4499698721908927968L;
 	
 	private Include mainInclude;
-	private String[] dataStateDef = {"View", "Edit"};
+//	private String[] dataStateDef = {"View", "Edit"};
 	
 	private static final Logger log = Logger.getLogger(MainController.class);
 	
@@ -34,28 +27,28 @@ public class MainController extends GFCBaseController {
 	public void onCreate$mainWin(Event event) throws Exception {
 		log.info("Main Windows created...");
 		
-		mainInclude.setSrc("~./secure/dashboard/Dashboard.zul");
-		Map<String, VoucherJournalDialogData> arg = 
-				Collections.singletonMap("voucherJournalDialogData", getVoucherJournalDialogData());
-		
-		Window window = 
-				(Window) Executions.createComponents("~./secure/voucher/VoucherJournalDialog.zul", null, arg);
-		window.doModal();	
+//		mainInclude.setSrc("~./secure/dashboard/Dashboard.zul");
+//		Map<String, VoucherJournalDialogData> arg = 
+//				Collections.singletonMap("voucherJournalDialogData", getVoucherJournalDialogData());
+//		
+//		Window window = 
+//				(Window) Executions.createComponents("~./secure/voucher/VoucherJournalDialog.zul", null, arg);
+//		window.doModal();	
 	}
 	
-	private VoucherJournalDialogData getVoucherJournalDialogData() {
-		
-		VoucherJournalDialogData voucherJournalDialogData =
-		 		new VoucherJournalDialogData();
-		
-		voucherJournalDialogData.setAmount(new BigDecimal(150000));
-		voucherJournalDialogData.setCredit(true);
-		voucherJournalDialogData.setVoucherType(VoucherType.GENERAL);
-		voucherJournalDialogData.setTransactionDescription("Beli ATK");
-		voucherJournalDialogData.setDataState(dataStateDef[0]);
-		
-		return voucherJournalDialogData;
-	}
+//	private VoucherJournalDialogData getVoucherJournalDialogData() {
+//		
+//		VoucherJournalDialogData voucherJournalDialogData =
+//		 		new VoucherJournalDialogData();
+//		
+//		voucherJournalDialogData.setAmount(new BigDecimal(150000));
+//		voucherJournalDialogData.setCredit(true);
+//		voucherJournalDialogData.setVoucherType(VoucherType.GENERAL);
+//		voucherJournalDialogData.setTransactionDescription("Beli ATK");
+//		voucherJournalDialogData.setDataState(dataStateDef[0]);
+//		
+//		return voucherJournalDialogData;
+//	}
 	
 	public void onClickDashboardMenu(Event event) {
 		log.info("onClickDashboardMenu..."+event.getData().toString());
@@ -93,6 +86,11 @@ public class MainController extends GFCBaseController {
 		mainInclude.setSrc("~./secure/coa/Coa_05_Master.zul");		
 	}
 	
+	public void onClickGeneralLedgerMenu(Event event) {
+		log.info("onClickGeneralLedgerMenu..."+event.getData().toString());
+		
+		mainInclude.setSrc("~./secure/gl/GeneralLedger.zul");						
+	}
 	
 	public void onClickActivityJournalMenu(Event event) {
 		log.info("onClickActivityJournalMenu..."+event.getData().toString());

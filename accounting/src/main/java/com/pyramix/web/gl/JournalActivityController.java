@@ -155,10 +155,13 @@ public class JournalActivityController extends GFCBaseController {
 			LocalDate lastMonthDate = todayDate.minusDays(30);
 			// last month end date
 			LocalDate lastMonthDateEnd = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
-			
-			accountCloseLastMonth =
-					getBalanceDao().findAccountBalanceByCoa_ClosingDate(selCoaMaster, 
-							asDate(lastMonthDateEnd, zoneId));			
+			try {
+				accountCloseLastMonth =
+						getBalanceDao().findAccountBalanceByCoa_ClosingDate(selCoaMaster, 
+								asDate(lastMonthDateEnd, zoneId));							
+			} catch (Exception e) {
+				throw new Exception(e.getMessage());
+			}
 			
 			if (accountCloseLastMonth==null) {
 				throw new Exception("No Closing Balance at the end of last month.");

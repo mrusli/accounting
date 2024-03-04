@@ -1,0 +1,27 @@
+<div xmlns:n="native" id="generalLedgerPanel" apply="${generalLedgerController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">General Ledger</n:span>
+		</div>
+		<div style="margin-top: 10px; margin-left: 10px;">
+			<div class="list-header" style="width: 1205px">
+				<div class="list-header-content">
+					<n:span class="text">Start Date:</n:span>
+					<datebox id="startDatebox"></datebox>					
+					<n:span class="text">End Date:</n:span>
+					<datebox id="endDatebox"></datebox>					
+				</div>
+			</div>
+			<listbox id="generalLedgerListbox" mold="paging" height="500px" width="1205px" pageSize="7">
+				<listhead>
+					<listheader label="Date" width="180px"/>
+					<listheader label="COA" width="260px"/>
+					<listheader label="Description" width="420px"/>
+					<listheader label="Debit(Rp.)" width="160px" align="right"/>
+					<listheader label="Credit(Rp.)" width="160px" align="right"/>
+					<listheader />
+				</listhead>
+			</listbox>
+		</div>				
+	</n:section>
+</div>
