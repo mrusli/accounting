@@ -744,21 +744,21 @@ public class Coa_05_MasterController extends GFCBaseController {
 					 */
 					private Coa_05_Master getCoa_05_AccountMasterModifiedData(Coa_05_Master accountMaster) throws Exception {
 						// accountType combobox
-						Combobox combobox = 
+						Combobox accountTypeCombobox = 
 								(Combobox) listcell.getParent().getChildren().get(0).getFirstChild();
-						log.info(combobox.getValue());
+						log.info(accountTypeCombobox.getValue());
 						// accountGroup combobox
-						combobox =
+						Combobox accountGroupCombobox =
 								(Combobox) listcell.getParent().getChildren().get(1).getFirstChild();
-						log.info(combobox.getValue());
+						log.info(accountGroupCombobox.getValue());
 						// subAccount01 combobox
-						combobox = 
+						Combobox subAccount01Combobox = 
 								(Combobox) listcell.getParent().getChildren().get(2).getFirstChild();
-						log.info(combobox.getValue());				
+						log.info(subAccount01Combobox.getValue());				
 						// subAccount02 combobox
 						Combobox subAccount02Combobox = 
 								(Combobox) listcell.getParent().getChildren().get(3).getFirstChild();
-						log.info(combobox.getValue());
+						log.info(subAccount02Combobox.getValue());
 						// accountMaster Number intbox
 						Intbox accountMasterIntbox =
 								(Intbox) listcell.getParent().getChildren().get(4).getFirstChild();
@@ -782,23 +782,24 @@ public class Coa_05_MasterController extends GFCBaseController {
 						// set
 						Coa_04_SubAccount02 sel_coa_04_SubAccount02 =
 								subAccount02Combobox.getSelectedItem().getValue();
+						accountMaster.setSubAccount02(sel_coa_04_SubAccount02);
 						Coa_03_SubAccount01 sel_coa_03_SubAccount01 =
-								getCoa_03_SubAccount01ByProxy(sel_coa_04_SubAccount02);
+								subAccount01Combobox.getSelectedItem().getValue();
+						accountMaster.setSubAccount01(sel_coa_03_SubAccount01);
 						Coa_02_AccountGroup sel_coa_02_AccountGroup =
-								getCoa_02_AccountGroupByProxy(sel_coa_03_SubAccount01);
+								accountGroupCombobox.getSelectedItem().getValue();
+						accountMaster.setAccountGroup(sel_coa_02_AccountGroup);
 						Coa_01_AccountType sel_coa_01_AccountType =
-								getCoa_01_AccountTypeByProxy(sel_coa_02_AccountGroup);
+								accountTypeCombobox.getSelectedItem().getValue();
+						accountMaster.setAccountType(sel_coa_01_AccountType);
 						int coa_05_MasterNumber = accountMasterIntbox.getValue();
-						// accountMaster.setSubAccount02(sel_coa_04_SubAccount02);
+
 						accountMaster.setSubaccount02CoaNumber(
 								sel_coa_04_SubAccount02.getSubAccount02Number());
-						// accountMaster.setSubAccount01(sel_coa_03_SubAccount01);
 						accountMaster.setSubaccount01CoaNumber(
 								sel_coa_03_SubAccount01.getSubAccount01Number());
-						// accountMaster.setAccountGroup(sel_coa_02_AccountGroup);
 						accountMaster.setGroupCoaNumber(
 								sel_coa_02_AccountGroup.getAccountGroupNumber());
-						// accountMaster.setAccountType(sel_coa_01_AccountType);
 						accountMaster.setTypeCoaNumber(
 								sel_coa_01_AccountType.getAccountTypeNumber());
 						accountMaster.setMasterCoaNumber(coa_05_MasterNumber);
@@ -877,6 +878,13 @@ public class Coa_05_MasterController extends GFCBaseController {
 		}
 	}
 
+	public void onClick$cancelAccountMasterButton(Event event) throws Exception {
+		log.info("Cancel button clicked.");
+		
+		// re-list
+		listCoaMaster();
+	}
+	
 	private Coa_03_SubAccount01 getCoa_03_SubAccount01ByProxy(
 			Coa_04_SubAccount02 sel_coa_04_SubAccount02) throws Exception {
 		

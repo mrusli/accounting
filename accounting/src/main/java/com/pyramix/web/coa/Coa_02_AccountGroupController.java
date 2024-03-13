@@ -433,6 +433,12 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 		coa_02_AccountGroupListModelList.add(coa_02_AccountGroup);
 	}
 
+	public void onClick$cancelButton(Event event) throws Exception {
+		log.info("Cancel button clicked.");
+		
+		listCoaGroup();
+	}
+	
 	private int getNextAccountGroupNumber() {
 		if (coa_02_AccountGroupList.size()==0) {
 			return 1;

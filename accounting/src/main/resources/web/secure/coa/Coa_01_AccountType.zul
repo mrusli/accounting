@@ -6,7 +6,8 @@
 	<div style="margin-top: 10px; margin-left: 10px;">
 		<div class="list-header" style="width: 600px;">
 			<div class="list-header-content">
-				<button id="newAccounTypeButton" label="New"></button>					
+				<button id="newAccounTypeButton" label="New"></button>
+				<button id="cancelButton" label="Cancel"></button>					
 			</div>
 		</div>
 		<listbox id="coaTypeListbox" mold="paging" height="500px" width="600px">

@@ -511,6 +511,12 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 		coa_04_SubAccount02ListModelList.add(coa_04_SubAccount02);
 	}
 	
+	public void onClick$cancelButton(Event event) throws Exception {
+		log.info("Cancel button clicked.");
+		
+		listCoaSubAccount02();
+	}
+	
 	private int getNextSubAccount02Number() {
 		if (coa_04_SubAccount02List.size()==0) {
 			return 1;

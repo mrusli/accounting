@@ -268,6 +268,12 @@ public class Coa_01_AccountTypeController extends GFCBaseController {
 		coa_01_AccountTypeListModelList.add(coa_01_AccountType);
 	}
 	
+	public void onClick$cancelButton(Event event) throws Exception {
+		log.info("Cancel button clicked.");
+		
+		listCoaType();
+	}
+	
 	private int getNextAccountTypeNumber() {
 		if (coa_01_AccountTypeList.size()==0) {
 			return 1;
