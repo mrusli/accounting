@@ -19,7 +19,12 @@
 				<listheader label="COA" width="60px"></listheader>
 				<listheader width="100px"/>
 			</listhead>
-		</listbox>	
+		</listbox>
+		<div>
+			<n:p>NOTE:</n:p>
+			<n:p>1. COA SubAccount01 yang sudah dipergunakan oleh COA SubAccount02 TIDAK dapat di ubah / modify !!!</n:p>
+			<n:p>2. Nomor dan Nama SubAccount01 dapat diubah, meskipun sudah dipergunakan oleh COA SubAccount02</n:p>
+		</div>	
 	</div>		
 </n:section>
 </div>
