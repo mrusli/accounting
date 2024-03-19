@@ -3,6 +3,7 @@ package com.pyramix.web.coa;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -62,10 +63,11 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 	
 	private void listCoaGroup() throws Exception {
 		coa_02_AccountGroupList = getCoa_02_AccountGroupDao().findAllCoa_02_AccountGroup();
-		coa_02_AccountGroupList.sort((a1,a2) -> {
-			return ((Integer)a1.getTypeCoaNumber()).compareTo(
-					a2.getTypeCoaNumber());
-		});
+		
+		Comparator<Coa_02_AccountGroup> compareAllAccounts =
+				Comparator.comparing(Coa_02_AccountGroup::getTypeCoaNumber)
+					.thenComparing(Coa_02_AccountGroup::getAccountGroupNumber);
+		coa_02_AccountGroupList.sort(compareAllAccounts);
 		
 		coa_02_AccountGroupListModelList = 
 				new ListModelList<Coa_02_AccountGroup>(coa_02_AccountGroupList);
