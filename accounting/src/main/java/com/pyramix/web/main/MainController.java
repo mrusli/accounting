@@ -27,7 +27,7 @@ public class MainController extends GFCBaseController {
 	public void onCreate$mainWin(Event event) throws Exception {
 		log.info("Main Windows created...");
 		
-		mainInclude.setSrc("~./secure/coa/Coa_03_SubAccount01.zul");
+		mainInclude.setSrc("~./secure/coa/Coa_04_SubAccount02.zul");
 
 //		Map<String, VoucherJournalDialogData> arg = 
 //				Collections.singletonMap("voucherJournalDialogData", getVoucherJournalDialogData());
