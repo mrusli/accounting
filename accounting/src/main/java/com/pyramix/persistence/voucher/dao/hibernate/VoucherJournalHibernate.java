@@ -64,4 +64,10 @@ public class VoucherJournalHibernate extends DaoHibernate implements VoucherJour
 			session.close();
 		}
 	}
+
+	@Override
+	public void delete(VoucherJournal voucherJournal) throws Exception {
+		
+		super.delete(voucherJournal);
+	}
 }

@@ -59,7 +59,11 @@ function trialBalanceMenuClick() {
 function reportJournalMenuClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickReportJournalMenu', 'ReportJournal...'));
 }
-
+/***********************ADMIN**************************/
+function adminMenuClick() {
+	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickAdminMenu', 'Admin...'));
+}
+/***********************PROFILE************************/
 function profileClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickProfileMenu', 'Profile...'));
 }

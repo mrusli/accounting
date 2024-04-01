@@ -123,6 +123,12 @@ public class MainController extends GFCBaseController {
 		mainInclude.setSrc("~./secure/report/JournalReport.zul");		
 	}
 	
+	public void onClickAdminMenu(Event event) {
+		log.info("onClickAdminMenu..."+event.getData().toString());
+		
+		mainInclude.setSrc("~./secure/admin/Admin.zul");				
+	}
+	
 	public void onClickProfileMenu(Event event) {
 		log.info("onClickProfileMenu..."+event.getData().toString());
 		

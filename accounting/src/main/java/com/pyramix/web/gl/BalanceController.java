@@ -76,18 +76,15 @@ public class BalanceController extends GFCBaseController {
 		// check whether all of the accounts already in the balance table
 		// --for each of the accounts not in the balance table, create a balance row
 		Balance balance=null;
-		for (Coa_05_Master coaMaster : coaMasterList) {
-			// ONLY assets, liabilities, and capital accounts 
-			// if (coaMaster.getTypeCoaNumber()<4) {				
-				try {
-					balance = getBalanceDao()
-							.findAccountBalanceByCoa_ClosingDate(coaMaster, endDatebox.getValue());					
-				} catch (NoResultException e) {
-					// create a new accountbalance and add to list of account balance
-					balance = createAccountBalance(coaMaster);
-					balanceList.add(balance);
-				}
-			// }			
+		for (Coa_05_Master coaMaster : coaMasterList) {				
+			try {
+				balance = getBalanceDao()
+						.findAccountBalanceByCoa_ClosingDate(coaMaster, endDatebox.getValue());					
+			} catch (NoResultException e) {
+				// create a new accountbalance and add to list of account balance
+				balance = createAccountBalance(coaMaster);
+				balanceList.add(balance);
+			}
 		}
 	}
 

@@ -89,10 +89,19 @@
 				</n:ul>
             </n:li>
 			<n:li>
+                <n:a href="#" onClick="adminMenuClick();">
+                    <n:i class='bx bx-customize' ></n:i>
+                    <n:span class="link_name">Admin</n:span>
+                </n:a>
+                <n:ul class="sub-menu blank">
+                    <n:li><n:a class="link_name" href="#" onClick="adminMenuClick();">Admin</n:a></n:li>
+                </n:ul>                				
+			</n:li>
+			<n:li>
                 <div class="profile-details">
                 	<n:a href="#" onClick="profileClick();">
 	                    <div class="profile-content">
-	                        <n:img src="/zkau/web/img/profile1.jpg" alt="profile3"></n:img>
+	                        <n:img src="/zkau/web/img/profile2.jpg" alt="profile2"></n:img>
 	                    </div>
 	                    <div class="name-job">
 	                        <n:div class="profile-name">Sarah</n:div>
