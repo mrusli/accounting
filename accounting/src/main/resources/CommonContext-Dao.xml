@@ -51,6 +51,22 @@
     	<property name="sessionFactory" ref="sessionFactory"></property>
     </bean>
     
+    <bean id="pettyCashDao" class="com.pyramix.persistence.pettycash.dao.hibernate.PettyCashHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="creditCardDao" class="com.pyramix.persistence.creditcard.dao.hibernate.CreditCardHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+	<bean id="projectDao" class="com.pyramix.persistence.project.dao.hibernate.ProjectHibernate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+    
+    <bean id="projectJournalDao" class="com.pyramix.persistence.projectjournal.dao.hibernate.ProjectJournalHibernate">
+    	<property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
     <!-- GL -->
     
     <bean id="generalLedgerDao" class="com.pyramix.persistence.gl.dao.hibernate.GeneralLedgerHibernate">

@@ -330,6 +330,15 @@ header .image-text .header-text {
 	margin-bottom: 10px;
 	z-index: -1;
 }
+.list-header-double {
+	width: 500px;
+	height: 120px;
+	border: 3px solid white;
+	background: var(--body-color);
+	border-radius: var(--card-border-radius);
+	margin-bottom: 10px;
+	z-index: -1;
+}
 .list-header-content {
 	padding: 10px 25px;
 }
@@ -378,6 +387,9 @@ header .image-text .header-text {
 }
 .z-tab-text {
 	color: var(--color-info-dark);
+}
+.z-tabpanel {
+	padding: 0px;
 }
 .z-textbox, .z-decimalbox, .z-intbox, .z-longbox, .z-doublebox {
 	background: var(--color-background);

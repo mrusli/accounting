@@ -99,7 +99,7 @@ public class GeneralLedgerHibernate extends DaoHibernate implements GeneralLedge
 		criteriaQuery.select(root).where(
 				criteriaBuilder.between(root.get("transactionDate"), startDate, endDate));
 		criteriaQuery.orderBy(
-				criteriaBuilder.asc(root.get("transactionDate")));
+				criteriaBuilder.desc(root.get("transactionDate")));
 		
 		try {
 			

@@ -20,7 +20,20 @@
 		<mapping class="com.pyramix.domain.voucher.VoucherJournal"/>
 		<mapping class="com.pyramix.domain.voucher.VoucherJournalDebitCredit"/>
 		<mapping class="com.pyramix.domain.voucher.VoucherSerialNumber"/>
-	
+
+		<!-- petty cash -->
+		<mapping class="com.pyramix.domain.pettycash.PettyCash"/>
+		<mapping class="com.pyramix.domain.pettycash.PettyCashDebitCredit"/>
+		
+		<!-- credit card -->
+		<mapping class="com.pyramix.domain.creditcard.CreditCard"/>
+		<mapping class="com.pyramix.domain.creditcard.CreditCardDebitCredit"/>		
+		
+		<!-- project -->
+		<mapping class="com.pyramix.domain.project.Project"/>
+		<mapping class="com.pyramix.domain.project.ProjectJournal"/>
+		<mapping class="com.pyramix.domain.project.ProjectJournalDebitCredit"/>
+		
 		<!-- gl -->
 		<mapping class="com.pyramix.domain.gl.GeneralLedger"/>
 		<mapping class="com.pyramix.domain.gl.Balance"/>

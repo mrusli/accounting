@@ -1,15 +1,21 @@
 package com.pyramix.web.voucher;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
@@ -28,6 +34,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Messagebox;
+import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -54,37 +61,120 @@ public class VoucherJournalController extends GFCBaseController {
 	private VoucherJournalDao voucherJournalDao;
 	private UserDao userDao;
 	
-	private Listbox voucherJournalListbox;
+	private Combobox periodCombobox;
+	private Datebox startDatebox, endDatebox;
+	private Listbox voucherJournalListbox, dataEntryListbox;
+	private Tab dataEntryTab, voucherJournalTab;
 	
 	private List<VoucherJournal> voucherJournalList;
-	private ListModelList<VoucherJournal> voucherJournalListModelList;
+	private List<VoucherJournal >dataEntryList = new ArrayList<VoucherJournal>();
+	private ListModelList<VoucherJournal> voucherJournalListModelList, dataEntryListModelList;
 	private List<VoucherJournalDebitCredit> voucherJournalDebitCreditList;
 	private ZoneId zoneId = getZoneId();
-	private LocalDate todayDate = getLocalDate(zoneId);
 	private User userCreate;
+	private final LocalDate todayDate = getLocalDate(zoneId);
 	
 	private String[] dataStateDef = {"View", "Edit"};
 	private String dataState;
 	
+	private static final int START_YEAR = 2024;
+	
+	final private static String PROPERTIES_FILE_PATH="/pyramix/config.properties";
+
 	private static final Logger log = Logger.getLogger(VoucherJournalController.class);
 	
 	public void onCreate$voucherJournalPanel(Event event) throws Exception {
 		log.info("voucherJournalPanel created.");
+		
+		// periods
+		listYearMonthPeriods();
+		
+		// read config
+		int selIndex = getConfigSelectedIndex();
+		periodCombobox.setSelectedIndex(selIndex);
+		
+		// set journal start and end date
+		setJournalStartAndEndDate();
 		
 		userCreate = getUserDao().findUserByUsername(getLoginUsername());
 		dataState = dataStateDef[0]; // set to "View"
 		
 		listVoucherJournal();
 	}
+
+	public void onCheck$defaultCheckbox(Event event) throws Exception {
+		int selIndex =	periodCombobox.getSelectedIndex();
+		
+		try (InputStream input = new FileInputStream(PROPERTIES_FILE_PATH)) {
+            Properties prop = new Properties();
+
+            // load the properties file
+            prop.load(input);
+			// set the properties value
+			prop.setProperty("voucherjournal_period_index", String.valueOf(selIndex));
+			// save properties to project root folder
+			prop.store(new FileOutputStream(PROPERTIES_FILE_PATH), null);
+            
+		} catch (IOException io) {
+			io.printStackTrace();
+		}		
+	}
 	
+	private int getConfigSelectedIndex() {
+		String idxStr = "0";
+		
+		try (InputStream input = new FileInputStream(PROPERTIES_FILE_PATH)) {
+
+            Properties prop = new Properties();
+
+            // load the properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            idxStr = prop.getProperty("voucherjournal_period_index");
+            log.info(idxStr);
+
+		} catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+		return Integer.valueOf(idxStr);
+	}
+
+	private void setJournalStartAndEndDate() {
+		int selPeriod = periodCombobox.getSelectedIndex();
+		
+		// selPeriod to month
+		Month month = Month.of(selPeriod+1);
+		
+		// set start and end LocalDate
+		LocalDate startLocalDate = LocalDate.of(START_YEAR, month, 1);
+		LocalDate endLocalDate = startLocalDate.with(TemporalAdjusters.lastDayOfMonth());
+
+		startDatebox.setValue(asDate(startLocalDate, zoneId));
+		endDatebox.setValue(asDate(endLocalDate, zoneId));
+	}	
+	
+	private void listYearMonthPeriods() {
+		Comboitem comboitem;
+		for (int i=1; i<13; i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(START_YEAR
+					+"-"+i);
+			comboitem.setParent(periodCombobox);
+		}		
+	}
+
 	private void listVoucherJournal() throws Exception {
 		voucherJournalList = 
-				getVoucherJournalDao().findAllVoucherJournal();
+				getVoucherJournalDao().findAllVoucherJournalByDate(startDatebox.getValue(), endDatebox.getValue());
+		
+		// NOTE: no need to sort, voucherJournalList already ordered by desc transactionDate
 		// comparator
-		Comparator<VoucherJournal> compareAllColumns =
-				Comparator.comparing(VoucherJournal::getTransactionDate);
+		// Comparator<VoucherJournal> compareAllColumns =
+		//		Comparator.comparing(VoucherJournal::getTransactionDate);
 		// sort - reversed the transactionDate (earliest first)
-		voucherJournalList.sort(compareAllColumns.reversed());
+		// voucherJournalList.sort(compareAllColumns.reversed());
 		
 		voucherJournalListModelList =
 				new ListModelList<VoucherJournal>(voucherJournalList);
@@ -102,6 +192,191 @@ public class VoucherJournalController extends GFCBaseController {
 				Listcell lc;
 				
 				// Tgl.Journal
+				lc = new Listcell(); 
+				lc.setLabel(dateToStringDisplay(asLocalDate(voucherJournal.getTransactionDate()),
+						"yyyy-MM-dd", getLocale()));
+						// initTransactionDate(new Listcell(), voucherJournal);
+				lc.setParent(item);
+				
+				// No.Voucher
+				lc =  new Listcell();
+				lc.setLabel(voucherJournal.getVoucherNumber().getSerialComp());
+						// initVoucherNumber(new Listcell(), voucherJournal);
+				lc.setParent(item);
+				
+				// Nominal(Rp.)
+				lc = new Listcell();
+				lc.setLabel(toDecimalFormat(voucherJournal.getTheSumOf(), getLocale(), "###.###.###,-"));
+						// initTheSumOf(new Listcell(), voucherJournal);
+				lc.setParent(item);
+								
+				// Tipe Journal
+				lc = new Listcell();
+				lc.setLabel(voucherJournal.getVoucherType().toString());
+						// initVoucherType(new Listcell(), voucherJournal);
+				lc.setParent(item);
+				
+				// Status
+				lc = new Listcell();
+				lc.setLabel(voucherJournal.getVoucherStatus().toString());
+						// initVoucherStatus(new Listcell(), voucherJournal);
+				lc.setParent(item);
+								
+				// Transaksi Info
+				lc = new Listcell();
+				lc.setLabel(voucherJournal.getTransactionDescription());
+						// initTransactionDescription(new Listcell(), voucherJournal);
+				lc.setParent(item);
+				
+				// Referensi
+				lc = new Listcell(); 
+				lc.setLabel(voucherJournal.getDocumentRef());
+						// initDocumentRef(new Listcell(), voucherJournal);
+				lc.setParent(item);
+				
+				// User
+				lc = new Listcell();
+				VoucherJournal voucherJournalUserCreateByProxy = 
+						getVoucherJournalDao().findVoucherJournalUserCreateByProxy(voucherJournal.getId());
+				lc.setLabel(
+						voucherJournalUserCreateByProxy.getUserCreate().getReal_name());
+				lc.setValue(voucherJournalUserCreateByProxy.getUserCreate());
+						// initUserCreate(new Listcell(), voucherJournal);
+				lc.setParent(item);
+				
+				// DB/CR
+				lc = new Listcell();
+				lc.setLabel("Db/Cr");
+				lc.setStyle("text-decoration: underline;");
+				lc.addEventListener(Events.ON_CLICK, onDbCrViewClicked(lc, voucherJournal));
+				lc.setParent(item);
+			}
+
+			private EventListener<Event> onDbCrViewClicked(Listcell lc, VoucherJournal voucherJournal) {
+				
+				return new EventListener<Event>() {
+					
+					@Override
+					public void onEvent(Event event) throws Exception {	
+						log.info("View DB/CR Clicked.");
+						setupViewVoucherJournalDialog(lc, voucherJournal);
+					}
+				};
+			}
+		};
+	}	
+
+	protected void setupJournalDatebox(Listcell listcell, LocalDate localDate) {
+		Datebox datebox = new Datebox();
+		datebox.setWidth("130px");
+		datebox.setLocale(getLocale());
+		datebox.setValue(asDate(localDate, zoneId));
+		datebox.setParent(listcell);
+	}
+
+	protected void setupSumOfDecimalbox(Listcell listcell, BigDecimal amount) {
+		Decimalbox decimalbox = new Decimalbox();
+		decimalbox.setWidth("110px");
+		decimalbox.setLocale(getLocale());
+		decimalbox.setValue(amount);
+		decimalbox.setParent(listcell);
+	}	
+	
+	protected void setupDebitOrCreditCheckbox(Listcell listcell, boolean check) {
+		Checkbox checkbox = new Checkbox();
+		checkbox.setChecked(check);
+		checkbox.setLabel(check ? "Db" : "Cr");
+		checkbox.setParent(listcell);
+		checkbox.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
+
+			@Override
+			public void onEvent(Event event) throws Exception {
+				checkbox.setLabel(checkbox.isChecked() ? "Db" : "Cr");
+			}
+		});
+	}
+	
+	protected void setupVoucherTypeCombobox(Listcell listcell, VoucherType voucherType) {
+		Combobox combobox = new Combobox();
+		combobox.setWidth("100px");
+		combobox.setParent(listcell);
+		// set voucherType comboitems
+		setVoucherTypeComboitems(combobox);
+		// select
+		selectVoucherTypeCombobox(combobox, voucherType);
+	}
+
+	private void setVoucherTypeComboitems(Combobox combobox) {
+		Comboitem comboitem;
+		for (VoucherType voucherType : VoucherType.values()) {
+			if (voucherType.getValue()<=6) {
+				comboitem = new Comboitem();
+				comboitem.setLabel(voucherType.toString());
+				comboitem.setValue(voucherType);
+				comboitem.setParent(combobox);
+			}
+		}
+	}	
+
+	private void selectVoucherTypeCombobox(Combobox combobox, VoucherType voucherType) {
+		for (Comboitem comboitem : combobox.getItems()) {
+			if (comboitem.getValue().equals(voucherType)) {
+				combobox.setSelectedItem(comboitem);
+			}
+		}
+	}	
+	
+	protected void setupTextbox(Listcell listcell, String description) {
+		Textbox textbox = new Textbox();
+		textbox.setWidth("180px");
+		textbox.setValue(description);
+		textbox.setParent(listcell);
+	}	
+	
+	public void onSelect$periodCombobox(Event event) throws Exception {
+		// set start and end date
+		setJournalStartAndEndDate();
+	}
+	
+	public void onClick$findVoucherJournalButton(Event event) throws Exception {
+		log.info("findVoucherJournalButton clicked.");
+		
+		// re-list
+		listVoucherJournal();
+	}
+	
+	public void onClick$newVoucherJournalButton(Event event) throws Exception {
+		log.info("newVoucherJournalButton clicked.");
+		
+		voucherJournalDebitCreditList = null;
+		
+		// create dataEntryListModelList and renderer
+		listDataEntryList();
+		
+		// switch to 'Data-Entry' tab
+		dataEntryTab.setSelected(true);
+		
+		// add new row
+		dataEntryListModelList.add(0, new VoucherJournal());
+	}
+	
+	private void listDataEntryList() {
+		// create a listmodellist for dataentry
+		dataEntryListModelList = new ListModelList<VoucherJournal>(dataEntryList);
+		// assign to listbox
+		dataEntryListbox.setModel(dataEntryListModelList);
+		dataEntryListbox.setItemRenderer(getDataEntryListItemRenderer());		
+	}	
+
+	private ListitemRenderer<VoucherJournal> getDataEntryListItemRenderer() {
+		
+		return new ListitemRenderer<VoucherJournal>() {
+			
+			@Override
+			public void render(Listitem item, VoucherJournal voucherJournal, int index) throws Exception {
+				Listcell lc;
+				
+				// Tgl.Journal
 				lc = initTransactionDate(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
@@ -110,10 +385,10 @@ public class VoucherJournalController extends GFCBaseController {
 				lc.setParent(item);
 				
 				// Nominal(Rp.)
-				lc = initTheSumbOf(new Listcell(), voucherJournal);
+				lc = initTheSumOf(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
-				// Debit
+				// DB/CR
 				lc = initDebit(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
@@ -125,7 +400,7 @@ public class VoucherJournalController extends GFCBaseController {
 				lc = initVoucherStatus(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
-				// posting
+				// -- Posting --
 				lc = initPosting(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
@@ -137,30 +412,35 @@ public class VoucherJournalController extends GFCBaseController {
 				lc = initDocumentRef(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
-				// User
+				// User Create
 				lc = initUserCreate(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
-				// DbCr
+				// -- Db/Cr
 				lc = initDbCr(new Listcell(), voucherJournal);
 				lc.setParent(item);
 				
-				// edit
+				// -- SaveOrEdit
 				lc = initSaveOrEdit(new Listcell(), voucherJournal);
-				lc.setParent(item);
+				lc.setParent(item);				
+				
 			}
-
+			
 			private Listcell initTransactionDate(Listcell listcell, VoucherJournal voucherJournal) {
 				if (voucherJournal.getId().compareTo(Long.MIN_VALUE)==0) {
+					// set todayDate according to the 'Period'
+					int selPeriod = periodCombobox.getSelectedIndex();
+					// selPeriod to month
+					Month month = Month.of(selPeriod+1);
 					// new
-					setupJournalDatebox(listcell, todayDate);					
+					setupJournalDatebox(listcell,  LocalDate.of(START_YEAR, month, 1));					
 				} else {
 					listcell.setLabel(dateToStringDisplay(asLocalDate(voucherJournal.getTransactionDate()),
-							"dd-MM-yyyy", getLocale()));
+							"yyyy-MM-dd", getLocale()));
 				}
 				return listcell;
-			}
-
+			}	
+			
 			private Listcell initVoucherNumber(Listcell listcell, VoucherJournal voucherJournal) {
 				if (voucherJournal.getId().compareTo(Long.MIN_VALUE)==0) {
 					// created later just before saving
@@ -169,9 +449,9 @@ public class VoucherJournalController extends GFCBaseController {
 				}
 				
 				return listcell;
-			}
+			}			
 
-			private Listcell initTheSumbOf(Listcell listcell, VoucherJournal voucherJournal) throws Exception {
+			private Listcell initTheSumOf(Listcell listcell, VoucherJournal voucherJournal) throws Exception {
 				if (voucherJournal.getId().compareTo(Long.MIN_VALUE)==0) {
 					// new
 					setupSumOfDecimalbox(listcell, BigDecimal.ZERO);					
@@ -243,11 +523,15 @@ public class VoucherJournalController extends GFCBaseController {
 					
 					@Override
 					public void onEvent(Event event) throws Exception {
+						log.info("PostButton Clicked...");
+						
 						List<GeneralLedger> glList = new ArrayList<GeneralLedger>();
 						
 						// create posting voucher serialnumber
 						VoucherSerialNumber postingVoucherNumber =
 								getVoucherSerialNumber(VoucherType.POSTING_GENERAL, asDate(todayDate, zoneId));
+						
+						voucherJournal.getVoucherJournalDebitCredits().forEach(c->log.info(c.toString()));
 						
 						// create a new GL object and populate the object using data from voucherJournal and dbcr
 						for (VoucherJournalDebitCredit dbcr : voucherJournal.getVoucherJournalDebitCredits()) {
@@ -282,8 +566,21 @@ public class VoucherJournalController extends GFCBaseController {
 						// update
 						getVoucherJournalDao().update(voucherJournal);
 						
+						// remove voucherJournal from dataEntryList
+						dataEntryList.remove(voucherJournal);
+						
+						// dataEntryList.forEach(c -> log.info(c.toString()));
+						
+						// re-list dataEntryList
+						listDataEntryList();
+						
 						// re-list to hide the modify button
 						listVoucherJournal();
+						
+						if (dataEntryList.isEmpty()) {
+							// switch over to the Voucher-Journal tab
+							voucherJournalTab.setSelected(true);							
+						}
 					}
 				};
 			}
@@ -324,12 +621,12 @@ public class VoucherJournalController extends GFCBaseController {
 
 			private Listcell initDbCr(Listcell listcell, VoucherJournal voucherJournal) {
 				if (voucherJournal.getId().compareTo(Long.MIN_VALUE)==0) {
-					log.info("new object...");
+					// log.info("new object...");
 					listcell.setLabel("Db/Cr");
 					listcell.setStyle("text-decoration: underline;");
 					listcell.addEventListener(Events.ON_CLICK, onDbCrCreateButtonClicked(listcell, voucherJournal)); 
 				} else {
-					log.info("existing object...");
+					// log.info("existing object...");
 					listcell.setLabel("Db/Cr");
 					listcell.setStyle("text-decoration: underline;");
 					listcell.addEventListener(Events.ON_CLICK, onDbCrButtonClicked(listcell, voucherJournal));
@@ -345,7 +642,7 @@ public class VoucherJournalController extends GFCBaseController {
 
 					@Override
 					public void onEvent(Event event) throws Exception {
-						log.info("Create DbCr");
+						// log.info("Create DbCr");
 						
 						Decimalbox decimalbox = (Decimalbox) listcell.getParent().getChildren().get(2).getFirstChild();
 						if (decimalbox.getValue().compareTo(BigDecimal.ZERO)==0) {
@@ -410,17 +707,25 @@ public class VoucherJournalController extends GFCBaseController {
 					public void onEvent(Event event) throws Exception {
 						VoucherJournal voucherJournalData =
 								getVoucherJournalData(listcell, voucherJournal);
-						// 
-						
 						// check dbcr
 						if (voucherJournalData.getVoucherJournalDebitCredits()==null) {
 							throw new Exception("Debit Credit Not Completed.");
 						}
 						log.info(voucherJournalData.toString());
-						// save
-						getVoucherJournalDao().save(voucherJournalData);
+						// save and get the new voucherJournal id
+						Long id =
+								getVoucherJournalDao().save(voucherJournalData);
+						// log.info("New VoucherJournal Id: "+id);
+						VoucherJournal voucherJournalDataEntry =
+								getVoucherJournalDao().findVoucherJournalById(id);
+						// log.info(voucherJournalDataEntry.getVoucherJournalDebitCredits());
+						
+						// add to dataEntry list
+						dataEntryList.add(voucherJournalDataEntry);
+						
 						// re-list
-						listVoucherJournal();
+						listDataEntryList();
+						
 						// reset to view
 						dataState = dataStateDef[0];
 					}
@@ -457,7 +762,7 @@ public class VoucherJournalController extends GFCBaseController {
 				voucherJournal.setUserCreate(userCreate);
 				LocalDateTime currentDateTime = getLocalDateTime(zoneId);
 				voucherJournal.setLastModified(asDateTime(currentDateTime, zoneId));
-				// voucherJournal.setVoucherJournalDebitCredits(voucherJournal.getVoucherJournalDebitCredits());
+				voucherJournal.setVoucherJournalDebitCredits(voucherJournal.getVoucherJournalDebitCredits());
 				
 				return voucherJournal;
 			}			
@@ -488,7 +793,8 @@ public class VoucherJournalController extends GFCBaseController {
 							// update
 							getVoucherJournalDao().update(voucherJournalData);
 							// re-list
-							listVoucherJournal();
+							// listVoucherJournal();
+							listDataEntryList();
 							// change to "View"
 							dataState = dataStateDef[0];
 							// change button back to modify
@@ -628,107 +934,33 @@ public class VoucherJournalController extends GFCBaseController {
 				}
 				
 				return voucherJournalDialogData;
-			}
-			
-			private void setupViewVoucherJournalDialog(Listcell listcell, VoucherJournal voucherJournal) {
-				Map<String, VoucherJournalDialogData> arg = 
-						Collections.singletonMap("voucherJournalDialogData", getViewVoucherJournalDialogData(listcell, voucherJournal));
-				Window window = 
-						(Window) Executions.createComponents("~./secure/voucher/VoucherJournalDialog.zul", null, arg);
-				window.doModal();				
-			}
-			
-			private VoucherJournalDialogData getViewVoucherJournalDialogData(Listcell listcell, VoucherJournal voucherJournal) {
-				VoucherJournalDialogData voucherJournalDialogData =
-				 		new VoucherJournalDialogData();
-				
-				voucherJournalDialogData.setAmount(BigDecimal.ZERO);
-				voucherJournalDialogData.setCredit(false);
-				voucherJournalDialogData.setVoucherType(null);
-				voucherJournalDialogData.setTransactionDescription(null);
-				voucherJournalDialogData.setDataState(dataState);
-				voucherJournalDialogData.setVoucherJournalDebitCredit(
-							voucherJournal.getVoucherJournalDebitCredits());
-				
-				return voucherJournalDialogData;
 			}			
 		};
-	}	
-
-	protected void setupJournalDatebox(Listcell listcell, LocalDate localDate) {
-		Datebox datebox = new Datebox();
-		datebox.setWidth("130px");
-		datebox.setLocale(getLocale());
-		datebox.setValue(asDate(localDate, zoneId));
-		datebox.setParent(listcell);
 	}
 
-	protected void setupSumOfDecimalbox(Listcell listcell, BigDecimal amount) {
-		Decimalbox decimalbox = new Decimalbox();
-		decimalbox.setWidth("110px");
-		decimalbox.setLocale(getLocale());
-		decimalbox.setValue(amount);
-		decimalbox.setParent(listcell);
-	}	
-	
-	protected void setupDebitOrCreditCheckbox(Listcell listcell, boolean check) {
-		Checkbox checkbox = new Checkbox();
-		checkbox.setChecked(check);
-		checkbox.setLabel(check ? "Db" : "Cr");
-		checkbox.setParent(listcell);
-		checkbox.addEventListener(Events.ON_CHECK, new EventListener<Event>() {
-
-			@Override
-			public void onEvent(Event event) throws Exception {
-				checkbox.setLabel(checkbox.isChecked() ? "Db" : "Cr");
-			}
-		});
+	private void setupViewVoucherJournalDialog(Listcell listcell, VoucherJournal voucherJournal) {
+		Map<String, VoucherJournalDialogData> arg = 
+				Collections.singletonMap("voucherJournalDialogData", getViewVoucherJournalDialogData(listcell, voucherJournal));
+		Window window = 
+				(Window) Executions.createComponents("~./secure/voucher/VoucherJournalDialog.zul", null, arg);
+		window.doModal();				
 	}
 	
-	protected void setupVoucherTypeCombobox(Listcell listcell, VoucherType voucherType) {
-		Combobox combobox = new Combobox();
-		combobox.setWidth("100px");
-		combobox.setParent(listcell);
-		// set voucherType comboitems
-		setVoucherTypeComboitems(combobox);
-		// select
-		selectVoucherTypeCombobox(combobox, voucherType);
-	}
-
-	private void setVoucherTypeComboitems(Combobox combobox) {
-		Comboitem comboitem;
-		for (VoucherType voucherType : VoucherType.values()) {
-			if (voucherType.getValue()<=6) {
-				comboitem = new Comboitem();
-				comboitem.setLabel(voucherType.toString());
-				comboitem.setValue(voucherType);
-				comboitem.setParent(combobox);
-			}
-		}
-	}	
-
-	private void selectVoucherTypeCombobox(Combobox combobox, VoucherType voucherType) {
-		for (Comboitem comboitem : combobox.getItems()) {
-			if (comboitem.getValue().equals(voucherType)) {
-				combobox.setSelectedItem(comboitem);
-			}
-		}
-	}	
-	
-	protected void setupTextbox(Listcell listcell, String description) {
-		Textbox textbox = new Textbox();
-		textbox.setWidth("180px");
-		textbox.setValue(description);
-		textbox.setParent(listcell);
-	}	
-	
-	public void onClick$newVoucherJournalButton(Event event) throws Exception {
-		log.info("newVoucherJournalButton clicked.");
+	private VoucherJournalDialogData getViewVoucherJournalDialogData(Listcell listcell, VoucherJournal voucherJournal) {
+		VoucherJournalDialogData voucherJournalDialogData =
+		 		new VoucherJournalDialogData();
 		
-		voucherJournalDebitCreditList = null;
+		voucherJournalDialogData.setAmount(BigDecimal.ZERO);
+		voucherJournalDialogData.setCredit(false);
+		voucherJournalDialogData.setVoucherType(null);
+		voucherJournalDialogData.setTransactionDescription(null);
+		voucherJournalDialogData.setDataState(dataState);
+		voucherJournalDialogData.setVoucherJournalDebitCredit(
+					voucherJournal.getVoucherJournalDebitCredits());
 		
-		voucherJournalListModelList.add(0, new VoucherJournal());
-	}
+		return voucherJournalDialogData;
+	}				
+	
 	
 	public void onClick$cancelVoucherJournalButton(Event event) throws Exception {
 		log.info("cancelVoucherJournalButton clicked.");
@@ -739,7 +971,8 @@ public class VoucherJournalController extends GFCBaseController {
 		voucherJournalDebitCreditList = null;
 		
 		// re-list
-		listVoucherJournal();
+		// listVoucherJournal();
+		listDataEntryList();
 	}
 
 	private VoucherSerialNumber getVoucherSerialNumber(VoucherType voucherType, Date currentDate) throws Exception {

@@ -56,7 +56,9 @@
 				<n:ul class="sub-menu">
 					<n:li><n:a class="link_name" href="#">Voucher</n:a></n:li>
 					<n:li><n:a href="#" onClick="voucherGeneralMenuClick();">General</n:a></n:li>
-					<n:li><n:a href="#">PettyCash</n:a></n:li>                   
+					<n:li><n:a href="#" onClick="pettyCashMenuClick();">PettyCash</n:a></n:li> 
+					<n:li><n:a href="#" onClick="creditCardMenuClick();">CreditCard</n:a></n:li>
+					<n:li><n:a href="#" onClick="projectJournalMenuClick();">ProjectJournal</n:a></n:li>                   
 				</n:ul>
             </n:li>	
 			<n:li>

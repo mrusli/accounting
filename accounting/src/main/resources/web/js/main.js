@@ -41,6 +41,15 @@ function coaMasterMenuClick() {
 function voucherGeneralMenuClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickVoucherGeneralMenu', 'VoucherGeneral...'));		
 }
+function pettyCashMenuClick() {
+	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickPettyCashMenu', 'PettyCash...'));
+}
+function creditCardMenuClick() {
+	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickCreditCardMenu', 'CreditCard...'));
+}
+function projectJournalMenuClick() {
+	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickProjectJournalMenu', 'Project...'));
+}
 /************************GL************************/
 function generalLedgerMenuClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickGeneralLedgerMenu', 'General Ledger...'));		

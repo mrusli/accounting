@@ -1,0 +1,41 @@
+<div xmlns:n="native" id="creditCardPanel" apply="${creditCardController}">
+	<n:section class="panel-section">
+		<div class="panel-content">
+			<n:span class="text">Credit Card</n:span>
+		</div>
+		<div style="margin-top: 10px; margin-left: 10px;">
+			<div class="list-header-double" style="width: 1550px">
+				<div class="list-header-content">
+					<label value="Period: "></label>
+					<combobox id="periodCombobox" width="110px"></combobox>
+					<label value="Set Default"></label>
+					<checkbox id="defaultCheckbox" checked="false"></checkbox>
+					<label value="CreditCard Account: "></label>
+					<combobox id="ccAcctCombobox"></combobox>
+					<button id="findButton" label="Find"></button>
+					<button id="newCreditCardButton" label="New"></button>
+					<button id="cancelCreditCardButton" label="Cancel"></button>
+				</div>
+				<div class="list-header-content">
+					<label id="begBalanceLabel"></label>
+					<label id="endBalanceLabel"></label>
+				</div>
+			</div>
+			<listbox id="creditCardListbox" mold="paging" height="500px" width="1550px" pageSize="7">
+				<listhead>
+					<listheader label="Tgl.Jurnal" width="150px"/>
+					<listheader label="No.Voucher" width="120px"/>
+					<listheader label="Nominal(Rp.)" width="130px" align="right"/>
+					<listheader label="COA" width="260px"></listheader>
+					<listheader label="Transaksi Info" width="200px"/>
+					<listheader label="Referensi" width="200px"/>
+					<listheader label="User Create" width="140px"/>
+					<listheader label="" width="100px"/>
+					<listheader label="Status" width="80px"/>
+					<listheader label="" width="80px"/>					
+					<listheader/>
+				</listhead>								
+			</listbox>		
+		</div>		
+	</n:section>
+</div>

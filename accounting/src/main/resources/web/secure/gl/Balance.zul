@@ -6,6 +6,10 @@
 		<div style="margin-top: 10px; margin-left: 10px;">
 			<div class="list-header" style="margin-left: 10px; height:60px; width: 1205px">
 				<div class="list-header-content">
+					<label value="Period: "></label>
+					<combobox id="periodCombobox" width="110px"></combobox>
+					<label value="Set Default"></label>
+					<checkbox id="defaultCheckbox" checked="false"></checkbox>					
 					<n:span class="text">Journal Start Date:</n:span>
 					<datebox id="startDatebox"></datebox>					
 					<n:span class="text">Journal End Date:</n:span>

@@ -26,6 +26,8 @@ import com.pyramix.persistence.gl.dao.BalanceDao;
 import com.pyramix.persistence.gl.dao.GeneralLedgerDao;
 import com.pyramix.web.common.GFCBaseController;
 
+import jakarta.persistence.NoResultException;
+
 public class JournalActivityController extends GFCBaseController {
 
 	/**
@@ -159,15 +161,15 @@ public class JournalActivityController extends GFCBaseController {
 				accountCloseLastMonth =
 						getBalanceDao().findAccountBalanceByCoa_ClosingDate(selCoaMaster, 
 								asDate(lastMonthDateEnd, zoneId));							
-			} catch (Exception e) {
-				throw new Exception(e.getMessage());
+			} catch (NoResultException e) {
+				// throw new Exception(e.getMessage());
 			}
 			
-			if (accountCloseLastMonth==null) {
-				throw new Exception("No Closing Balance at the end of last month.");
-			} else {
-				log.info(accountCloseLastMonth.toString());				
-			}
+//			if (accountCloseLastMonth==null) {
+//				throw new Exception("No Closing Balance at the end of last month.");
+//			} else {
+//				log.info(accountCloseLastMonth.toString());				
+//			}
 		} else {
 			log.info("non permanent account - no need balance from last month");
 		}

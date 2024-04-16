@@ -33,7 +33,7 @@ public class GFCBaseController extends GenericForwardComposer<Component> impleme
 	private final String longDateFormat 	= "dd-MMMM-yyyy";
 	private final String shortDateFormat 	= "dd-MM-yyyy";
 	private final String emphYearMonth		= "yyyy-MMMM-dd";
-	private final String emphYearMonthShort = "yyyyMMdd";
+	private final String emphYearMonthShort = "yyyy-MM-dd";
 	
 	// Format : Decimal and Non-Decimal 
 	private final String decimalFormat		= "###.###.###,00";
@@ -351,7 +351,7 @@ public class GFCBaseController extends GenericForwardComposer<Component> impleme
 	}
 
 	/**
-	 * @return emphYearMonthShort = "yyyyMMdd"
+	 * @return emphYearMonthShort = "yyyy-MM-dd"
 	 */
 	public String getEmphYearMonthShort() {
 		return emphYearMonthShort;

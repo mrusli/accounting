@@ -1,9 +1,11 @@
 package com.pyramix.persistence.voucher.dao.hibernate;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import com.pyramix.domain.voucher.VoucherJournal;
 import com.pyramix.persistence.common.dao.hibernate.DaoHibernate;
@@ -29,9 +31,28 @@ public class VoucherJournalHibernate extends DaoHibernate implements VoucherJour
 	}
 
 	@Override
-	public void save(VoucherJournal voucherJOurnal) throws Exception {
+	public Long save(VoucherJournal voucherJournal) throws Exception {
 		
-		super.save(voucherJOurnal);
+		super.save(voucherJournal);
+		
+		Session session =
+				super.getSessionFactory().openSession();
+		
+		Transaction transaction = session.beginTransaction();
+		
+		try {
+			VoucherJournal sessVoucherJournal = 
+					session.get(voucherJournal.getClass(), voucherJournal.getId());
+			// commit
+			transaction.commit();
+			// return
+			return sessVoucherJournal.getId();
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			session.close();
+		}		
 	}
 
 	@Override
@@ -63,5 +84,28 @@ public class VoucherJournalHibernate extends DaoHibernate implements VoucherJour
 		} finally {
 			session.close();
 		}
+	}
+
+	@Override
+	public List<VoucherJournal> findAllVoucherJournalByDate(Date startDate, Date endDate) throws Exception {
+		Session session = super.getSessionFactory().openSession();
+		
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<VoucherJournal> criteriaQuery = criteriaBuilder.createQuery(VoucherJournal.class);
+		Root<VoucherJournal> root = criteriaQuery.from(VoucherJournal.class);
+		criteriaQuery.select(root).where(
+				criteriaBuilder.between(root.get("transactionDate"), startDate, endDate));
+		criteriaQuery.orderBy(
+				criteriaBuilder.desc(root.get("transactionDate")));
+		try {
+			
+			return session.createQuery(criteriaQuery).getResultList();
+
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			session.close();
+		}
+		
 	}
 }

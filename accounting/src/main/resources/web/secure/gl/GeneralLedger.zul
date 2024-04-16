@@ -6,13 +6,18 @@
 		<div style="margin-top: 10px; margin-left: 10px;">
 			<div class="list-header" style="width: 1205px">
 				<div class="list-header-content">
+					<label value="Period: "></label>
+					<combobox id="periodCombobox" width="110px"></combobox>
+					<label value="Set Default"></label>
+					<checkbox id="defaultCheckbox" checked="false"></checkbox>				
 					<n:span class="text">Start Date:</n:span>
 					<datebox id="startDatebox"></datebox>					
 					<n:span class="text">End Date:</n:span>
-					<datebox id="endDatebox"></datebox>					
+					<datebox id="endDatebox"></datebox>
+					<button id="findGeneralLedgerButton" label="Find"></button>										
 				</div>
 			</div>
-			<listbox id="generalLedgerListbox" mold="paging" height="500px" width="1205px" pageSize="7">
+			<listbox id="generalLedgerListbox" mold="paging" height="500px" width="1205px" pageSize="10">
 				<listhead>
 					<listheader label="Date" width="180px"/>
 					<listheader label="COA" width="260px"/>

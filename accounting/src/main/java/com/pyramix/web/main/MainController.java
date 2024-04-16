@@ -27,8 +27,7 @@ public class MainController extends GFCBaseController {
 	public void onCreate$mainWin(Event event) throws Exception {
 		log.info("Main Windows created...");
 		
-		mainInclude.setSrc("~./secure/coa/Coa_03_SubAccount01.zul");
-
+		mainInclude.setSrc("~./secure/voucher/VoucherJournal.zul");
 //		Map<String, VoucherJournalDialogData> arg = 
 //				Collections.singletonMap("voucherJournalDialogData", getVoucherJournalDialogData());
 //		
@@ -109,6 +108,24 @@ public class MainController extends GFCBaseController {
 		log.info("onClickVoucherGeneralMenu..."+event.getData().toString());
 		
 		mainInclude.setSrc("~./secure/voucher/VoucherJournal.zul");		
+	}
+	
+	public void onClickPettyCashMenu(Event event) {
+		log.info("onClickPettyCashMenu..."+event.getData().toString());
+		
+		mainInclude.setSrc("~./secure/voucher/PettyCash.zul");		
+	}
+	
+	public void onClickCreditCardMenu(Event event) {
+		log.info("onClickCreditCardMenu..."+event.getData().toString());
+		
+		mainInclude.setSrc("~./secure/voucher/CreditCard.zul");		
+	}
+	
+	public void onClickProjectJournalMenu(Event event) {
+		log.info("onClickProjectJournalMenu..."+event.getData().toString());
+		
+		mainInclude.setSrc("~./secure/voucher/ProjectJournal.zul");		
 	}
 	
 	public void onClickReportTrialBalanceMenu(Event event) {

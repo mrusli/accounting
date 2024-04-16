@@ -6,26 +6,64 @@
 		<div style="margin-top: 10px; margin-left: 10px;">
 			<div class="list-header" style="width: 1550px">
 				<div class="list-header-content">
+					<label value="Period: "></label>
+					<combobox id="periodCombobox" width="110px"></combobox>
+					<label value="Set Default"></label>
+					<checkbox id="defaultCheckbox" checked="false"></checkbox>
+					<n:span class="text">Journal Start Date:</n:span>
+					<datebox id="startDatebox"></datebox>					
+					<n:span class="text">Journal End Date:</n:span>
+					<datebox id="endDatebox"></datebox>
+					<button id="findVoucherJournalButton" label="Find"></button>
 					<button id="newVoucherJournalButton" label="New"></button>
 					<button id="cancelVoucherJournalButton" label="Cancel"></button>					
 				</div>
 			</div>
-			<listbox id="voucherJournalListbox" mold="paging" height="500px" width="1550px" pageSize="7">
-				<listhead>
-					<listheader label="Tgl.Jurnal" width="150px"/>
-					<listheader label="No.Voucher" width="120px"/>
-					<listheader label="Nominal(Rp.)" width="130px" align="right"/>
-					<listheader label="Db/Cr" width="90px"></listheader>
-					<listheader label="Tipe Journal" width="120px"/>
-					<listheader label="Status" width="80px"/>
-					<listheader label="" width="80px"/>
-					<listheader label="Transaksi Info" width="200px"/>
-					<listheader label="Referensi" width="200px"/>
-					<listheader label="User Create" width="140px"/>
-					<listheader label="" width="80px"/>
-					<listheader label="" width="100px"/>					
-				</listhead>
-			</listbox>			
+			<tabbox id="mainTabbox" width="1550px">
+				<tabs style="background: var(--color-white); 
+					border-top-left-radius: var(--card-border-radius); border-top-right-radius: var(--card-border-radius);">
+					<tab id="voucherJournalTab" label="Voucher-Journal" style="background: var(--color-white);"/>
+					<tab id="dataEntryTab" label="Data-Entry" style="background: var(--color-white);"/>
+				</tabs>
+				<tabpanels>
+					<tabpanel>
+						<listbox id="voucherJournalListbox" mold="paging" height="500px" width="1550px" pageSize="7"
+							style="border-top-left-radius: 0px; border-top-right-radius: 0px;">
+							<listhead>
+								<listheader label="Tgl.Jurnal" width="150px"/>
+								<listheader label="No.Voucher" width="120px"/>
+								<listheader label="Nominal(Rp.)" width="130px" align="right"/>
+								<listheader label="Tipe Journal" width="120px"/>
+								<listheader label="Status" width="80px"/>
+								<listheader label="Transaksi Info" width="200px"/>
+								<listheader label="Referensi" width="200px"/>
+								<listheader label="User Create" width="140px"/>
+								<listheader label="DB/CR" width="80px"/>
+							</listhead>
+						</listbox>					
+					</tabpanel>
+					<tabpanel>
+						<listbox id="dataEntryListbox" mold="paging" height="500px" width="1550px" pageSize="7"
+							style="border-top-left-radius: 0px; border-top-right-radius: 0px;" 
+							emptyMessage="Click New to start your data entry...">
+							<listhead>
+								<listheader label="Tgl.Jurnal" width="150px"/>
+								<listheader label="No.Voucher" width="120px"/>
+								<listheader label="Nominal(Rp.)" width="130px" align="right"/>
+								<listheader label="Db/Cr" width="90px"></listheader>
+								<listheader label="Tipe Journal" width="120px"/>
+								<listheader label="Status" width="80px"/>
+								<listheader label="" width="80px"/>
+								<listheader label="Transaksi Info" width="200px"/>
+								<listheader label="Referensi" width="200px"/>
+								<listheader label="User Create" width="140px"/>
+								<listheader label="" width="80px"/>
+								<listheader label="" width="100px"/>					
+							</listhead>
+						</listbox>						
+					</tabpanel>
+				</tabpanels>
+			</tabbox>
 		</div>
 	</n:section>
 </div>

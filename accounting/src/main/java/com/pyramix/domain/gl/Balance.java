@@ -49,7 +49,7 @@ public class Balance extends IdBasedObject {
 	
 	@Override
 	public String toString() {
-		return "AccountClose [" + super.toString() + ", coa_05_Master=" + coa_05_Master + ", debitTotal=" 
+		return "Balance [" + super.toString() + ", coa_05_Master=" + coa_05_Master + ", debitTotal=" 
 				+ debitTotal + ", creditTotal="	+ creditTotal + ", closeAmount=" + getBalanceAmount() 
 				+ ", resetBalance=" + resetBalance + ", closingDate=" + closingDate + "]";
 	}

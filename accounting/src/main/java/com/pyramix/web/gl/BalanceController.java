@@ -1,11 +1,17 @@
 package com.pyramix.web.gl;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.event.Event;
@@ -13,6 +19,8 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
+import org.zkoss.zul.Combobox;
+import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -41,6 +49,7 @@ public class BalanceController extends GFCBaseController {
 	private BalanceDao balanceDao;
 	private Coa_05_AccountMasterDao coa_05_AccountMasterDao;
 	
+	private Combobox periodCombobox;
 	private Datebox startDatebox, endDatebox;
 	private Listbox accountBalanceListbox;
 	
@@ -51,10 +60,23 @@ public class BalanceController extends GFCBaseController {
 	private ZoneId zoneId = getZoneId();
 	private LocalDate todayDate = getLocalDate(zoneId);
 	
+	private static final int START_YEAR = 2024;
+	// temporary ONLY -- MUST default to 30 days ago
+	// private static final int START_DAY = 90;
+	
+	final private static String PROPERTIES_FILE_PATH="/pyramix/config.properties";
+	
 	private static final Logger log = Logger.getLogger(BalanceController.class);
 	
 	public void onCreate$balancePanel(Event event) throws Exception {
-		log.info("accountClosingPanel created.");
+		log.info("accountBalancePanel created.");
+		
+		// read config
+		int selIndex = getConfigSelectedIndex();
+		log.info("selectedIndex : "+selIndex);
+		// periods
+		listYearMonthPeriods();
+		periodCombobox.setSelectedIndex(selIndex);
 		
 		// set start and end date -- default to previous month start and end date 
 		setClosingStartAndEndDate();
@@ -68,43 +90,99 @@ public class BalanceController extends GFCBaseController {
 		// list Account Balance
 		listAccountBalance();
 	}
+	
+	private int getConfigSelectedIndex() {
+		String idxStr = "0";
+		
+		try (InputStream input = new FileInputStream(PROPERTIES_FILE_PATH)) {
 
+            Properties prop = new Properties();
+
+            // load the properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            idxStr = prop.getProperty("balance_period_index");
+            log.info("balance_period_index = "+idxStr);
+
+		} catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+		return Integer.valueOf(idxStr);
+	}
+
+	public void onCheck$defaultCheckbox(Event event) throws Exception {
+		int selIndex =	periodCombobox.getSelectedIndex();
+		
+		try (InputStream input = new FileInputStream(PROPERTIES_FILE_PATH)) {
+            Properties prop = new Properties();
+
+            // load the properties file
+            prop.load(input);
+			// set the properties value
+			prop.setProperty("balance_period_index", String.valueOf(selIndex));
+			// save properties to project root folder
+			prop.store(new FileOutputStream(PROPERTIES_FILE_PATH), null);
+            
+		} catch (IOException io) {
+			io.printStackTrace();
+		}		
+	}
+	
+	private void listYearMonthPeriods() {
+		Comboitem comboitem;
+		for (int i=1; i<13; i++) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(START_YEAR
+					+"-"+i);
+			comboitem.setParent(periodCombobox);
+		}
+	}
+	
+	private void setClosingStartAndEndDate() {
+		// MUST default to 30 days ago -- since we're starting, we default to Jan 2024,
+		// which is 90 days
+		// LocalDate lastMonthDate = todayDate.minusDays(START_DAY); 
+
+		int selPeriod = periodCombobox.getSelectedIndex();
+		
+		// selPeriod to month
+		Month month = Month.of(selPeriod+1);		
+		
+		LocalDate startDate = LocalDate.of(START_YEAR, month, 1);
+		// log.info("Start Date: "+startDate.toString());
+		startDatebox.setLocale(getLocale());
+		startDatebox.setValue(asDate(startDate, zoneId));
+		
+		LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());
+		// log.info("End Date: "+endDate.toString());
+		endDatebox.setLocale(getLocale());
+		endDatebox.setValue(asDate(endDate, zoneId));
+	}	
+	
 	private void processAccountBalance() throws Exception {
+		log.info("processAccountBalance to produce balanceList");
+		
 		// get existing account balances
 		balanceList = getBalanceDao().findAccountBalanceBy_ClosingDate(endDatebox.getValue());
-		
 		// check whether all of the accounts already in the balance table
 		// --for each of the accounts not in the balance table, create a balance row
 		Balance balance=null;
 		for (Coa_05_Master coaMaster : coaMasterList) {
-			// ONLY assets, liabilities, and capital accounts 
-			// if (coaMaster.getTypeCoaNumber()<4) {				
-				try {
-					balance = getBalanceDao()
-							.findAccountBalanceByCoa_ClosingDate(coaMaster, endDatebox.getValue());					
-				} catch (NoResultException e) {
-					// create a new accountbalance and add to list of account balance
-					balance = createAccountBalance(coaMaster);
-					balanceList.add(balance);
-				}
-			// }			
+			try {
+				balance = getBalanceDao()
+						.findAccountBalanceByCoa_ClosingDate(coaMaster, endDatebox.getValue());					
+			} catch (NoResultException e) {
+				// create a new accountbalance and add to list of account balance
+				balance = createAccountBalance(coaMaster);
+				balanceList.add(balance);
+			}
 		}
+		
+		// balanceList.forEach(c -> log.info("balance: "+c.toString()));
 	}
 
-	private void setClosingStartAndEndDate() {
-		LocalDate lastMonthDate = todayDate.minusDays(30); 
-		log.info("30 days ago: "+lastMonthDate.toString());
-		
-		LocalDate startDate = lastMonthDate.with(TemporalAdjusters.firstDayOfMonth());
-		log.info("Start Date: "+startDate.toString());
-		startDatebox.setLocale(getLocale());
-		startDatebox.setValue(asDate(startDate, zoneId));
-		
-		LocalDate endDate = lastMonthDate.with(TemporalAdjusters.lastDayOfMonth());
-		log.info("End Date: "+endDate.toString());
-		endDatebox.setLocale(getLocale());
-		endDatebox.setValue(asDate(endDate, zoneId));
-	}
 
 	private Balance createAccountBalance(Coa_05_Master coaMaster) throws Exception {
 		Balance balance = new Balance();
@@ -131,15 +209,17 @@ public class BalanceController extends GFCBaseController {
 						coaMaster, startDatebox.getValue(), endDatebox.getValue());
 		
 		// find balance amount from previous month
-		LocalDate prevEndDate = endDatebox.getValueInLocalDate().minusMonths(1);
-		log.info("End Date: "+endDatebox.getValue());
-		log.info("PreviousMonth: "+prevEndDate);
+		LocalDate prevEndDate = endDatebox.getValueInLocalDate().minusMonths(1).with(TemporalAdjusters.lastDayOfMonth());
+		// log.info("End Date: "+endDatebox.getValue());
+		// log.info("PreviousMonth: "+prevEndDate);
 		// getting the previous month balance amount
 		BigDecimal prevBalanceAmount = BigDecimal.ZERO; 
 		try {
 			Balance balanceAccount = getBalanceDao()
 					.findAccountBalanceByCoa_ClosingDate(coaMaster, asDate(prevEndDate, zoneId));
+			// log.info("balanceAcct: "+balanceAccount.toString());
 			prevBalanceAmount = balanceAccount.getBalanceAmount();
+			// log.info("prevBalance: "+prevBalanceAmount);
 		} catch (NoResultException e) {
 			log.info("No previous month closing balance.  Previous month closing balance set 0 (zero).");
 		}
@@ -294,12 +374,27 @@ public class BalanceController extends GFCBaseController {
 						acctBalanceToUpdate.setLastModified(asDateTime(currentDateTime, zoneId));
 						// update balance account
 						getBalanceDao().update(acctBalanceToUpdate);
+						// get all account balances and create new ones if not existed
+						processAccountBalance();
 						// re-list
 						listAccountBalance();
 					}
 				};
 			}			
 		};
+	}
+	
+	public void onSelect$periodCombobox(Event event) throws Exception {
+		int selPeriod = periodCombobox.getSelectedIndex();
+
+		// selPeriod to month
+		Month month = Month.of(selPeriod+1);
+		
+		LocalDate startDate = LocalDate.of(START_YEAR, month, 1);		
+		LocalDate endDate = startDate.with(TemporalAdjusters.lastDayOfMonth());
+		
+		startDatebox.setValue(asDate(startDate, zoneId));
+		endDatebox.setValue(asDate(endDate, zoneId));
 	}
 	
 	public void onClick$findAccountBalanceButton(Event event) throws Exception {

@@ -77,6 +77,32 @@
 	
 	</bean>
 	
+	<bean id="pettyCashController" class="com.pyramix.web.voucher.PettyCashController" scope="prototype" parent="basisController">
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+		<property name="balanceDao" ref="balanceDao"></property>
+		<property name="pettyCashDao" ref="pettyCashDao"></property>
+		<property name="userDao" ref="userDao"></property>
+		<property name="serialNumberGenerator" ref="serialNumberGenerator"></property>
+		<property name="generalLedgerDao" ref="generalLedgerDao"></property>
+	</bean>
+	
+	<bean id="creditCardController" class="com.pyramix.web.voucher.CreditCardController" scope="prototype" parent="basisController">
+		<property name="coa_04_SubAccount02Dao" ref="coa_04_SubAccount02Dao"></property>	
+		<property name="coa_05_AccountMasterDao" ref="coa_05_AccountMasterDao"></property>
+		<property name="balanceDao" ref="balanceDao"></property>
+		<property name="creditCardDao" ref="creditCardDao"></property>
+		<property name="userDao" ref="userDao"></property>
+		<property name="serialNumberGenerator" ref="serialNumberGenerator"></property>
+		<property name="generalLedgerDao" ref="generalLedgerDao"></property>			
+	</bean>
+
+	<bean id="projectJournalController" class="com.pyramix.web.voucher.ProjectJournalController" scope="prototype" parent="basisController">
+		<property name="userDao" ref="userDao"></property>
+		<property name="projectDao" ref="projectDao"></property>
+		<property name="projectJournalDao" ref="projectJournalDao"></property>
+		<property name="serialNumberGenerator" ref="serialNumberGenerator"></property>
+	</bean>
+	
 	<!-- GL -->
 	
 	<bean id="generalLedgerController" class="com.pyramix.web.gl.GeneralLedgerController" scope="prototype" parent="basisController">
