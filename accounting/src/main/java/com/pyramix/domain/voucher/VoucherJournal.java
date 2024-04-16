@@ -70,12 +70,12 @@ public class VoucherJournal extends IdBasedObject {
 	private Date postingDate;
 	
 	//	`posting_voucher_no_id_fk` bigint DEFAULT NULL,
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "posting_voucher_no_id_fk")	
 	private VoucherSerialNumber postingVoucherSerialNumber;
 	
 	//	`voucher_no_id_fk` bigint DEFAULT NULL,
-	@OneToOne(cascade = { CascadeType.PERSIST }, fetch = FetchType.EAGER)
+	@OneToOne(cascade = { CascadeType.PERSIST }, orphanRemoval = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "voucher_no_id_fk")	
 	private VoucherSerialNumber voucherNumber;
 	

@@ -132,65 +132,65 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 				return listcell;
 			}
 
-			private void setupComboitemOfAccountTypes(Combobox combobox) throws Exception {
-				// get the list of account types
-				List<Coa_01_AccountType> accountTypeList =
-						getCoa_01_AccountTypeDao().findAllCoa_01_AccountType();
-				// sort
-				Comparator<Coa_01_AccountType> compareAllAccounts =
-						Comparator.comparing(Coa_01_AccountType::getAccountTypeNumber);
-				accountTypeList.sort(compareAllAccounts);
-				// setup comboitems
-				Comboitem comboitem;
-				for (int i=0; i<accountTypeList.size(); i++) {
-					Coa_01_AccountType accountType =
-							accountTypeList.get(i);
-					comboitem = new Comboitem();
-					comboitem.setLabel(accountType.getAccountTypeNumber()
-							+"-"+accountType.getAccountTypeName());
-					comboitem.setValue(accountType);
-					comboitem.setParent(combobox);
-				}
-				
-			}
+//			private void setupComboitemOfAccountTypes(Combobox combobox) throws Exception {
+//				// get the list of account types
+//				List<Coa_01_AccountType> accountTypeList =
+//						getCoa_01_AccountTypeDao().findAllCoa_01_AccountType();
+//				// sort
+//				Comparator<Coa_01_AccountType> compareAllAccounts =
+//						Comparator.comparing(Coa_01_AccountType::getAccountTypeNumber);
+//				accountTypeList.sort(compareAllAccounts);
+//				// setup comboitems
+//				Comboitem comboitem;
+//				for (int i=0; i<accountTypeList.size(); i++) {
+//					Coa_01_AccountType accountType =
+//							accountTypeList.get(i);
+//					comboitem = new Comboitem();
+//					comboitem.setLabel(accountType.getAccountTypeNumber()
+//							+"-"+accountType.getAccountTypeName());
+//					comboitem.setValue(accountType);
+//					comboitem.setParent(combobox);
+//				}
+//				
+//			}
 
-			private EventListener<Event> onAccountTypeComboboxSelect(Listcell listcell,
-					Coa_03_SubAccount01 subAccount01) {
-
-				return new EventListener<Event>() {
-					
-					@Override
-					public void onEvent(Event event) throws Exception {
-						Combobox combobox = (Combobox) event.getTarget();
-						
-						if (subAccount01.getId().compareTo(Long.MIN_VALUE)==0) {
-							// do nothing
-						} else {
-							
-						}
-						
-						Coa_01_AccountType selAccountType = combobox.getSelectedItem().getValue();
-						log.info("selected account type: "+selAccountType.getAccountTypeName());
-						// account groups of the selected account type
-						Coa_01_AccountType selAccountTypeProxy = getCoa_01_AccountTypeDao()
-								.findCoa_01_AccountTypeAccountGroupsByProxy(selAccountType.getId());
-						List<Coa_02_AccountGroup> accountGroupList =
-								selAccountTypeProxy.getAccountGroups();
-						// accountGroup combobox
-						Combobox accountGroupCombobox =
-								(Combobox) listcell.getParent().getChildren().get(1).getFirstChild();
-						// clear comboitems
-						accountGroupCombobox.getItems().clear();
-						accountGroupCombobox.setValue("");
-						accountGroupCombobox.setPlaceholder("Select...");
-						// setup accountGroup comboitems based on the selected account type
-						// setupComboitemOfAccountGroups(accountGroupCombobox, accountGroupList);
-						
-
-						
-					}
-				};
-			}			
+//			private EventListener<Event> onAccountTypeComboboxSelect(Listcell listcell,
+//					Coa_03_SubAccount01 subAccount01) {
+//
+//				return new EventListener<Event>() {
+//					
+//					@Override
+//					public void onEvent(Event event) throws Exception {
+//						Combobox combobox = (Combobox) event.getTarget();
+//						
+//						if (subAccount01.getId().compareTo(Long.MIN_VALUE)==0) {
+//							// do nothing
+//						} else {
+//							
+//						}
+//						
+//						Coa_01_AccountType selAccountType = combobox.getSelectedItem().getValue();
+//						log.info("selected account type: "+selAccountType.getAccountTypeName());
+//						// account groups of the selected account type
+//						Coa_01_AccountType selAccountTypeProxy = getCoa_01_AccountTypeDao()
+//								.findCoa_01_AccountTypeAccountGroupsByProxy(selAccountType.getId());
+//						List<Coa_02_AccountGroup> accountGroupList =
+//								selAccountTypeProxy.getAccountGroups();
+//						// accountGroup combobox
+//						Combobox accountGroupCombobox =
+//								(Combobox) listcell.getParent().getChildren().get(1).getFirstChild();
+//						// clear comboitems
+//						accountGroupCombobox.getItems().clear();
+//						accountGroupCombobox.setValue("");
+//						accountGroupCombobox.setPlaceholder("Select...");
+//						// setup accountGroup comboitems based on the selected account type
+//						// setupComboitemOfAccountGroups(accountGroupCombobox, accountGroupList);
+//						
+//
+//						
+//					}
+//				};
+//			}			
 			
 			private Listcell initAccountGroup(Listcell listcell, Coa_03_SubAccount01 subAccount01) throws Exception {
 				if (subAccount01.getId().compareTo(Long.MIN_VALUE)==0) {
@@ -229,8 +229,11 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 				for (int i = 0; i < accountGroupList.size(); i++) {
 					Coa_02_AccountGroup accountGroup =
 							accountGroupList.get(i);
-					comboitem = new Comboitem();
-					comboitem.setLabel(accountGroup.getAccountGroupNumber()
+					Coa_02_AccountGroup accountGroupTypeByProxy =
+							getCoa_02_AccountGroupDao().findCoa_01_AccountType_ByProxy(accountGroup.getId());					
+					comboitem = new Comboitem();					
+					comboitem.setLabel(accountGroupTypeByProxy.getAccountType().getAccountTypeNumber()
+							+"."+accountGroup.getAccountGroupNumber()
 							+"-"+accountGroup.getAccountGroupName());
 					comboitem.setValue(accountGroup);
 					comboitem.setParent(combobox);

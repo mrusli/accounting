@@ -35,6 +35,13 @@ public interface VoucherJournalDao {
 	 */
 	public void update(VoucherJournal voucherJournal) throws Exception;
 
+
+	/**
+	 * @param voucherJournal
+	 * @throws Exception
+	 */
+	public void delete(VoucherJournal voucherJournal) throws Exception;
+	
 	/**
 	 * @param id
 	 * @return {@link VoucherJournal}

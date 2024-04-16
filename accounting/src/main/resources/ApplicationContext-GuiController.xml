@@ -134,6 +134,12 @@
 	
 	</bean>
 	
+	<!-- Admin -->
+	
+	<bean id="adminController" class="com.pyramix.web.admin.AdminController" scope="prototype" parent="basisController">
+		<property name="voucherJournalDao" ref="voucherJournalDao"></property>
+	</bean>
+	
 	<!-- Error -->
 	
 	<bean id="errorController" class="com.pyramix.web.error.ErrorController" scope="prototype" parent="basisController">

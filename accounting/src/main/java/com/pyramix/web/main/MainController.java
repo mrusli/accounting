@@ -28,6 +28,7 @@ public class MainController extends GFCBaseController {
 		log.info("Main Windows created...");
 		
 		mainInclude.setSrc("~./secure/voucher/VoucherJournal.zul");
+
 //		Map<String, VoucherJournalDialogData> arg = 
 //				Collections.singletonMap("voucherJournalDialogData", getVoucherJournalDialogData());
 //		
@@ -138,6 +139,12 @@ public class MainController extends GFCBaseController {
 		log.info("onClickReportJournalMenu..."+event.getData().toString());
 		
 		mainInclude.setSrc("~./secure/report/JournalReport.zul");		
+	}
+	
+	public void onClickAdminMenu(Event event) {
+		log.info("onClickAdminMenu..."+event.getData().toString());
+		
+		mainInclude.setSrc("~./secure/admin/Admin.zul");				
 	}
 	
 	public void onClickProfileMenu(Event event) {

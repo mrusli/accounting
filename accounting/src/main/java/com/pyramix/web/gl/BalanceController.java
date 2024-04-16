@@ -169,7 +169,8 @@ public class BalanceController extends GFCBaseController {
 		// check whether all of the accounts already in the balance table
 		// --for each of the accounts not in the balance table, create a balance row
 		Balance balance=null;
-		for (Coa_05_Master coaMaster : coaMasterList) {
+
+		for (Coa_05_Master coaMaster : coaMasterList) {				
 			try {
 				balance = getBalanceDao()
 						.findAccountBalanceByCoa_ClosingDate(coaMaster, endDatebox.getValue());					
