@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 
+import com.pyramix.domain.coa.Coa_01_AccountType;
 import com.pyramix.domain.coa.Coa_05_Master;
 import com.pyramix.persistence.coa.dao.Coa_05_AccountMasterDao;
 import com.pyramix.persistence.common.dao.hibernate.DaoHibernate;
@@ -184,6 +185,28 @@ public class Coa_05_AccountMasterHibernate extends DaoHibernate implements Coa_0
 		criteriaQuery.select(root).where(
 				criteriaBuilder.equal(root.get("active"), true),
 				criteriaBuilder.equal(root.get("typeCoaNumber"), accountTypeNo));
+		
+		try {
+			
+			return session.createQuery(criteriaQuery).getResultList();
+			
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			session.close();
+		}
+	}
+
+	@Override
+	public List<Coa_05_Master> find_All_Coa_05_Master_by_AccountType(Coa_01_AccountType accountType) throws Exception {
+		Session session = super.getSessionFactory().openSession();
+		
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaQuery<Coa_05_Master> criteriaQuery =
+				criteriaBuilder.createQuery(Coa_05_Master.class);
+		Root<Coa_05_Master> root = criteriaQuery.from(Coa_05_Master.class);
+		criteriaQuery.select(root).where(
+				criteriaBuilder.equal(root.get("typeCoaNumber"), accountType.getAccountTypeNumber()));
 		
 		try {
 			

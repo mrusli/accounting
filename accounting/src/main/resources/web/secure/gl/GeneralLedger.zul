@@ -4,7 +4,7 @@
 			<n:span class="text">General Ledger</n:span>
 		</div>
 		<div style="margin-top: 10px; margin-left: 10px;">
-			<div class="list-header" style="width: 1205px">
+			<div class="list-header-double" style="width: 1205px">
 				<div class="list-header-content">
 					<label value="Period: "></label>
 					<combobox id="periodCombobox" width="110px"></combobox>
@@ -15,6 +15,11 @@
 					<n:span class="text">End Date:</n:span>
 					<datebox id="endDatebox"></datebox>
 					<button id="findGeneralLedgerButton" label="Find"></button>										
+				</div>
+				<div class="list-header-content">
+					<label value="Account: "></label>
+					<combobox id="coaMasterCombobox" width="280px"></combobox>
+					<button id="filterButton" label="Filter"></button>
 				</div>
 			</div>
 			<listbox id="generalLedgerListbox" mold="paging" height="500px" width="1205px" pageSize="10">
@@ -27,6 +32,11 @@
 					<listheader />
 				</listhead>
 			</listbox>
+			<div class="list-footer" style="width: 1205px">
+				<div class="list-footer-content">
+					<label id="totalLabel" value="Total Debit: "></label>
+				</div>
+			</div>
 		</div>				
 	</n:section>
 </div>

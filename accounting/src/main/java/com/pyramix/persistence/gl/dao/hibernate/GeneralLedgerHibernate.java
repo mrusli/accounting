@@ -76,7 +76,7 @@ public class GeneralLedgerHibernate extends DaoHibernate implements GeneralLedge
 				criteriaBuilder.equal(root.get("masterCoa"), coa_05_Master),
 				criteriaBuilder.between(root.get("transactionDate"), startDate, endDate));
 		criteriaQuery.orderBy(
-				criteriaBuilder.asc(root.get("transactionDate")));
+				criteriaBuilder.desc(root.get("transactionDate")));
 		
 		try {
 			

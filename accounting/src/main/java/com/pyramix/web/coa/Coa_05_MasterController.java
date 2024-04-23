@@ -20,6 +20,9 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 
 import com.pyramix.domain.coa.Coa_01_AccountType;
@@ -48,6 +51,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 	private Coa_05_AccountMasterDao coa_05_AccountMasterDao;
 	
 	private Listbox coaMasterListbox;
+	private Tabbox coaTabbox;
 	
 	private List<Coa_05_Master> coa_05_MasterList;
 	private ListModelList<Coa_05_Master> coa_05_MasterListModelList;
@@ -61,13 +65,47 @@ public class Coa_05_MasterController extends GFCBaseController {
 	public void onCreate$coaMasterPanel(Event event) throws Exception {
 		log.info("coaMasterPanel created");
 		
-		listCoaMaster();
+		// set coa type for the tabbox
+		setupCoaTypeTabbox();
+		
+		// default accountType is the 1st tab
+		Coa_01_AccountType defaultAccountType = 
+				coaTabbox.getSelectedTab().getValue();
+		listMasterCoaByAccountType(defaultAccountType);
 	}
 	
-	private void listCoaMaster() throws Exception {
-		coa_05_MasterList = getCoa_05_AccountMasterDao().findAllCoa_05_Master();
+	private void setupCoaTypeTabbox() throws Exception {
+		Tabs tabs = new Tabs();
+		tabs.setParent(coaTabbox);
+		
+		List<Coa_01_AccountType> accountTypeList =
+				getCoa_01_AccountTypeDao().findAllCoa_01_AccountType();
+		Tab tab;
+		for (Coa_01_AccountType accountType : accountTypeList) {
+			tab = new Tab();		
+			tab.setLabel(accountType.getAccountTypeName());
+			tab.setValue(accountType);
+			tab.setParent(tabs);			
+		}		
+	}
+
+	public void onSelect$coaTabbox(Event event) throws Exception {
+		Tab selTab = coaTabbox.getSelectedTab();
+		
+		// value of the selected tab
+		Coa_01_AccountType accountType = selTab.getValue();
+		
+		// find coa_05_master according to accountType
+		listMasterCoaByAccountType(accountType);
+	}
+	
+	private void listMasterCoaByAccountType(Coa_01_AccountType accountType) throws Exception {
+		// find coa_05_master according to accountType
+		coa_05_MasterList =
+				getCoa_05_AccountMasterDao().find_All_Coa_05_Master_by_AccountType(accountType);
+		// sort
 		Comparator<Coa_05_Master> compareAllAccounts =
-			Comparator.comparing(Coa_05_Master::getTypeCoaNumber)
+				Comparator.comparing(Coa_05_Master::getTypeCoaNumber)
 				.thenComparingInt(Coa_05_Master::getGroupCoaNumber)
 				.thenComparingInt(Coa_05_Master::getSubaccount01CoaNumber)
 				.thenComparingInt(Coa_05_Master::getSubaccount02CoaNumber)
@@ -76,11 +114,11 @@ public class Coa_05_MasterController extends GFCBaseController {
 		
 		coa_05_MasterListModelList =
 				new ListModelList<Coa_05_Master>(coa_05_MasterList);
-		
-		coaMasterListbox.setModel(coa_05_MasterListModelList);
-		coaMasterListbox.setItemRenderer(getCoa_05_MasterListItemRenderer());
+				
+				coaMasterListbox.setModel(coa_05_MasterListModelList);
+				coaMasterListbox.setItemRenderer(getCoa_05_MasterListItemRenderer());
 	}
-
+	
 	private ListitemRenderer<Coa_05_Master> getCoa_05_MasterListItemRenderer() {
 		
 		return new ListitemRenderer<Coa_05_Master>() {
@@ -401,8 +439,12 @@ public class Coa_05_MasterController extends GFCBaseController {
 						log.info(coa_05_Master.toString());
 						// save
 						getCoa_05_AccountMasterDao().save(coa_05_Master);
-						// re-list
-						listCoaMaster();
+
+						// value of the selected tab
+						Coa_01_AccountType accountType = coaTabbox.getSelectedTab().getValue();
+						
+						// find coa_05_master according to accountType
+						listMasterCoaByAccountType(accountType);					
 					}
 
 					private Coa_05_Master getCoa_05_MasterData(Coa_05_Master accountMaster) throws Exception {
@@ -572,8 +614,10 @@ public class Coa_05_MasterController extends GFCBaseController {
 							log.info("Update : "+modAccountMaster.toString());
 							// update
 							getCoa_05_AccountMasterDao().update(modAccountMaster);
-							// re-list
-							listCoaMaster();
+							// value of the selected tab
+							Coa_01_AccountType accountType = coaTabbox.getSelectedTab().getValue();							
+							// find coa_05_master according to accountType
+							listMasterCoaByAccountType(accountType);
 						}
 					}
 
@@ -1002,8 +1046,11 @@ public class Coa_05_MasterController extends GFCBaseController {
 	public void onClick$cancelAccountMasterButton(Event event) throws Exception {
 		log.info("Cancel button clicked.");
 		
-		// re-list
-		listCoaMaster();
+		// value of the selected tab
+		Coa_01_AccountType accountType = coaTabbox.getSelectedTab().getValue();
+		
+		// find coa_05_master according to accountType
+		listMasterCoaByAccountType(accountType);
 	}
 	
 	private Coa_03_SubAccount01 getCoa_03_SubAccount01ByProxy(

@@ -10,7 +10,9 @@
 					<button id="cancelAccountMasterButton" label="Cancel"></button>					
 				</div>
 			</div>
-			<listbox id="coaMasterListbox" mold="paging" height="500px" width="1400px" pageSize="7">
+			<tabbox id="coaTabbox" class="tabbox-listbox" width="1400px">
+			</tabbox>			
+			<listbox id="coaMasterListbox" class="listbox-tabbox" mold="paging" height="500px" width="1400px" pageSize="7">
 				<listhead>
 					<listheader label="Account Type" width="160px"></listheader>
 					<listheader label="Account Group" width="160px"></listheader>

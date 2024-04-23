@@ -90,4 +90,6 @@ public interface Coa_05_AccountMasterDao {
 	 */
 	public List<Coa_05_Master> find_ActiveOnly_Coa_05_Master_by_AccountType(int coaAccountTypeNo) throws Exception;
 
+	public List<Coa_05_Master> find_All_Coa_05_Master_by_AccountType(Coa_01_AccountType accountType) throws Exception;
+
 }

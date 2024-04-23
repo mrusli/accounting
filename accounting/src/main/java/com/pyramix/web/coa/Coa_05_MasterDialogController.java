@@ -1,5 +1,6 @@
 package com.pyramix.web.coa;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -87,9 +88,17 @@ public class Coa_05_MasterDialogController extends GFCBaseController {
 	private void listCoaMaster() throws Exception {
 		coaMasterList = getCoa_05_AccountMasterDao()
 				.find_ActiveOnly_Coa_05_Master_by_AccountType(accountTypeSelected.getAccountTypeNumber());
-				
+		// sort
+		Comparator<Coa_05_Master> compareAllAccounts =
+				Comparator.comparing(Coa_05_Master::getTypeCoaNumber)
+				.thenComparingInt(Coa_05_Master::getGroupCoaNumber)
+				.thenComparingInt(Coa_05_Master::getSubaccount01CoaNumber)
+				.thenComparingInt(Coa_05_Master::getSubaccount02CoaNumber)
+				.thenComparingInt(Coa_05_Master::getMasterCoaNumber);
+		coaMasterList.sort(compareAllAccounts);
+		// create listmodellist
 		coaMasterListModelList = new ListModelList<Coa_05_Master>(coaMasterList);
-		
+		// set modellist and render
 		coa_05_MasterListbox.setModel(coaMasterListModelList);
 		coa_05_MasterListbox.setItemRenderer(getCoa_05_MasterListitemRenderer());
 	}

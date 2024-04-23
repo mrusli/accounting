@@ -73,7 +73,7 @@
 					<n:li><n:a class="link_name" href="#">GL</n:a></n:li>
 					<n:li><n:a href="#" onClick="generalLedgerMenuClick();">General Ledger</n:a></n:li>
 					<n:li><n:a href="#" onClick="accountBalanceMenuClick();">Account Balance</n:a></n:li>
-					<n:li><n:a href="#" onClick="activityJournalMenuClick();">Journal Activities</n:a></n:li>
+					<!-- <n:li><n:a href="#" onClick="activityJournalMenuClick();">Journal Activities</n:a></n:li> -->
 				</n:ul>                 			
 			</n:li>
             <n:li>
