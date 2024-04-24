@@ -175,12 +175,9 @@ public class Coa_05_MasterController extends GFCBaseController {
 					// new accountMaster
 					Combobox combobox = new Combobox();
 					combobox.setWidth("140px");
-					combobox.setPlaceholder("Select...");
 					combobox.setParent(listcell);
-					// setup comboitems
+					// setup comboitems of AccountType - depending on the selected tab
 					setupComboitemOfAccountTypes(combobox);
-					// event
-					combobox.addEventListener(Events.ON_SELECT, onAccountTypeComboboxSelect(listcell));
 				} else {
 					// existing accountMaster
 					Coa_05_Master proxyCoa_05_Master =
@@ -191,35 +188,6 @@ public class Coa_05_MasterController extends GFCBaseController {
 				
 				return listcell;
 			}
-
-			private EventListener<Event> onAccountTypeComboboxSelect(Listcell listcell) {
-
-				return new EventListener<Event>() {
-					
-					@Override
-					public void onEvent(Event event) throws Exception {
-						Combobox combobox = (Combobox) event.getTarget();
-						Coa_01_AccountType selAccountType = combobox.getSelectedItem().getValue();
-						Coa_01_AccountType selAccountTypeProxy = getCoa_01_AccountTypeDao()
-								.findCoa_01_AccountTypeAccountGroupsByProxy(selAccountType.getId());
-						List<Coa_02_AccountGroup> accountGroupList =
-								selAccountTypeProxy.getAccountGroups();
-						accountGroupList.forEach(Coa_02_AccountGroup -> log.info(Coa_02_AccountGroup.toString()));
-						// accountGroup combobox
-						Combobox accountGroupCombobox = 
-								(Combobox) listcell.getParent().getChildren().get(1).getFirstChild();
-						// clear comboitems
-						accountGroupCombobox.getItems().clear();
-						// enable
-						accountGroupCombobox.setDisabled(false);
-						accountGroupCombobox.setPlaceholder("Select...");
-						log.info("combobox is clear : "+combobox.getItems());
-						// setup comboitems
-						setupComboitemOfAccountGroups(accountGroupCombobox, accountGroupList);
-					}
-				};
-			}
-
 			
 			private Listcell initAccountGroup(Listcell listcell, Coa_05_Master accountMaster) throws Exception {
 				if (accountMaster.getId().compareTo(Long.MIN_VALUE)==0) {
@@ -228,6 +196,12 @@ public class Coa_05_MasterController extends GFCBaseController {
 					combobox.setWidth("140px");
 					combobox.setDisabled(true);
 					combobox.setParent(listcell);
+					
+					Coa_01_AccountType selAccountType =
+							coaTabbox.getSelectedTab().getValue();
+					// setup account group according to selected tab (account type)
+					setupComboboxOfAccountGroup(listcell, combobox, selAccountType);
+					// when user select account group
 					combobox.addEventListener(Events.ON_SELECT, onAccountGroupComboboxSelect(listcell));
 				} else {
 					Coa_05_Master proxyCoa_05_Master =
@@ -241,6 +215,24 @@ public class Coa_05_MasterController extends GFCBaseController {
 				return listcell;
 			}
 
+			private void setupComboboxOfAccountGroup(Listcell listcell, Combobox accountGroupCombobox, Coa_01_AccountType accountType) throws Exception {
+				Coa_01_AccountType selAccountTypeProxy = getCoa_01_AccountTypeDao()
+						.findCoa_01_AccountTypeAccountGroupsByProxy(accountType.getId());
+				List<Coa_02_AccountGroup> accountGroupList =
+						selAccountTypeProxy.getAccountGroups();
+
+				// clear comboitems
+				accountGroupCombobox.getItems().clear();
+				// enable
+				accountGroupCombobox.setDisabled(false);
+				accountGroupCombobox.setPlaceholder("Select...");
+				// setup comboitems
+				setupComboitemOfAccountGroups(accountGroupCombobox, accountGroupList);
+				// when account group is selected
+				accountGroupCombobox.addEventListener(Events.ON_SELECT, onAccountGroupComboboxSelect(listcell));
+			}
+			
+			
 			private EventListener<Event> onAccountGroupComboboxSelect(Listcell listcell) {
 				
 				return new EventListener<Event>() {
@@ -252,7 +244,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 								combobox.getSelectedItem().getValue();
 						log.info(selAccountGroup.toString());
 						Coa_02_AccountGroup accountGroupByProxy =
-								getCoa_02_AccountGroupDao().findCoa_03_SubAccount01s_ByProxy(selAccountGroup.getId());
+								getCoa_02_AccountGroupDao().findCoa_02_SubAccount01s_ByProxy(selAccountGroup.getId());
 						List<Coa_03_SubAccount01> coa_03_SubAccount01List =
 								accountGroupByProxy.getSubAccount01s();
 						coa_03_SubAccount01List.forEach((Coa_03_SubAccount01 c) -> log.info(c.toString()));
@@ -299,7 +291,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 								combobox.getSelectedItem().getValue();
 						log.info(selSubAccount01.toString());
 						Coa_03_SubAccount01 subAccount01Proxy =
-								getCoa_03_SubAccount01Dao().findCoa_04_SubAccount02s_ByProxy(selSubAccount01.getId());
+								getCoa_03_SubAccount01Dao().findCoa_03_SubAccount02s_ByProxy(selSubAccount01.getId());
 						List<Coa_04_SubAccount02> coa_04_SubAccount02List =
 								subAccount01Proxy.getSubAccount02s();
 						coa_04_SubAccount02List.forEach((Coa_04_SubAccount02 s) -> log.info(s.toString()));
@@ -508,25 +500,18 @@ public class Coa_05_MasterController extends GFCBaseController {
 			}
 			
 			private void setupComboitemOfAccountTypes(Combobox combobox) throws Exception {
-				// get the list of account types
-				List<Coa_01_AccountType> accountTypeList = 
-						getCoa_01_AccountTypeDao().findAllCoa_01_AccountType();
-				// sort
-				accountTypeList.sort((a1, a2) -> {
-					return ((Integer)a1.getAccountTypeNumber()).compareTo(
-							a2.getAccountTypeNumber());
-				});
-				// new items
-				Comboitem comboitem;
-				for (int i = 0; i < accountTypeList.size(); i++) {
-					Coa_01_AccountType accountType =
-							accountTypeList.get(i);
-					comboitem = new Comboitem();
-					comboitem.setLabel(accountType.getAccountTypeNumber()
-							+"-"+accountType.getAccountTypeName());
-					comboitem.setValue(accountType);
-					comboitem.setParent(combobox);
-				}				
+				// setup only account type selected in the tab
+				Coa_01_AccountType selAccountType =
+						coaTabbox.getSelectedTab().getValue();
+				
+				Comboitem comboitem = new Comboitem();
+				comboitem.setLabel(selAccountType.getAccountTypeNumber()
+						+"-"+selAccountType.getAccountTypeName());
+				comboitem.setValue(selAccountType);
+				comboitem.setParent(combobox);
+				
+				// set selected
+				combobox.setSelectedItem(comboitem);			
 			}			
 			
 			private void setupComboitemOfAccountGroups(Combobox combobox, 
@@ -711,7 +696,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 								Coa_02_AccountGroup selAccountGroup = 
 										combobox.getSelectedItem().getValue();
 								Coa_02_AccountGroup selAccountGroupProxy = getCoa_02_AccountGroupDao()
-										.findCoa_03_SubAccount01s_ByProxy(selAccountGroup.getId());
+										.findCoa_02_SubAccount01s_ByProxy(selAccountGroup.getId());
 								List<Coa_03_SubAccount01> subAccount01List =
 										selAccountGroupProxy.getSubAccount01s();
 								// subAccount01List.forEach((Coa_03_SubAccount01 s1) -> log.info(s1.toString()));
@@ -748,7 +733,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 						combobox.setParent(lc2);
 						// default subAccount01
 						Coa_02_AccountGroup selAccountGroupProxy = getCoa_02_AccountGroupDao()
-								.findCoa_03_SubAccount01s_ByProxy(defAccountGroup.getId());
+								.findCoa_02_SubAccount01s_ByProxy(defAccountGroup.getId());
 						List<Coa_03_SubAccount01> subAccount01List =
 								selAccountGroupProxy.getSubAccount01s();
 						// setup comboitems of subAccount01
@@ -766,7 +751,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 								Coa_03_SubAccount01 selSubAccount01 = 
 										combobox.getSelectedItem().getValue();
 								Coa_03_SubAccount01 selSubAccount01Proxy = getCoa_03_SubAccount01Dao()
-										.findCoa_04_SubAccount02s_ByProxy(selSubAccount01.getId());
+										.findCoa_03_SubAccount02s_ByProxy(selSubAccount01.getId());
 								List<Coa_04_SubAccount02> subAccount02List =
 										selSubAccount01Proxy.getSubAccount02s();
 								// subAccount02List.forEach((Coa_04_SubAccount02 s2) -> log.info(s2.toString()));
@@ -795,7 +780,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 						combobox.setParent(lc3);
 						// default subAccount02
 						Coa_03_SubAccount01 selSubAccount01Proxy = getCoa_03_SubAccount01Dao()
-								.findCoa_04_SubAccount02s_ByProxy(defSubAccount01.getId());
+								.findCoa_03_SubAccount02s_ByProxy(defSubAccount01.getId());
 						List<Coa_04_SubAccount02> subAccount02List =
 								selSubAccount01Proxy.getSubAccount02s();
 						// setup comboitems of subAccount02
@@ -1024,6 +1009,23 @@ public class Coa_05_MasterController extends GFCBaseController {
 		return numString;
 	}
 
+//	public void onSelect$coaMasterListbox(Event event) throws Exception {
+//		int selIndex = coaMasterListbox.getSelectedIndex();
+//		log.info("selected index: "+selIndex);
+//		
+//		Coa_05_Master selAccountMaster = 
+//				coaMasterListbox.getSelectedItem().getValue();
+//		log.info("selected account master coa: "+selAccountMaster.getMasterCoaNumber()
+//			+" "+selAccountMaster.getMasterCoaComp());
+//		
+//		int nextMasterCoaNumber = selAccountMaster.getMasterCoaNumber()+1;
+//		
+//		Coa_05_Master coa_05_Master = new Coa_05_Master();
+//		coa_05_Master.setMasterCoaNumber(nextMasterCoaNumber);
+//		
+//		coa_05_MasterListModelList.add(selIndex+1, coa_05_Master);
+//	}
+	
 	public void onClick$newAccountMasterButton(Event event) throws Exception {
 		Coa_05_Master coa_05_Master = new Coa_05_Master();
 		coa_05_Master.setMasterCoaNumber(getNextAccountMasterNumber());
@@ -1057,7 +1059,7 @@ public class Coa_05_MasterController extends GFCBaseController {
 			Coa_04_SubAccount02 sel_coa_04_SubAccount02) throws Exception {
 		
 		Coa_04_SubAccount02 coa_04_SubAccount02SubAccount01ByProxy =
-				getCoa_04_SubAccount02Dao().findCoa_03_SubAccount01_ByProxy(sel_coa_04_SubAccount02.getId());
+				getCoa_04_SubAccount02Dao().findCoa_04_SubAccount01_ByProxy(sel_coa_04_SubAccount02.getId());
 		Coa_03_SubAccount01 coa_03_SubAccount01 =
 				coa_04_SubAccount02SubAccount01ByProxy.getSubAccount01();
 		log.info(coa_03_SubAccount01.toString());

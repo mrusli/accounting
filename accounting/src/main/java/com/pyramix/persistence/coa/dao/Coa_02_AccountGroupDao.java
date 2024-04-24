@@ -52,10 +52,20 @@ public interface Coa_02_AccountGroupDao {
 	 * @return {@link Coa_02_AccountGroup}
 	 * @throws Exception
 	 */
-	public Coa_02_AccountGroup findCoa_03_SubAccount01s_ByProxy(long id) throws Exception;
+	public Coa_02_AccountGroup findCoa_02_SubAccount01s_ByProxy(long id) throws Exception;
 	
+	/**
+	 * @param coa_01_AccountType
+	 * @return {@link List} of {@link Coa_02_AccountGroup}
+	 * @throws Exception
+	 */
 	public List<Coa_02_AccountGroup> findCoa_02_AccountGroupByAccountType(Coa_01_AccountType coa_01_AccountType) throws Exception;
 
+	/**
+	 * @param selAccountType
+	 * @return {@link List} of {@link Coa_02_AccountGroup}
+	 * @throws Exception
+	 */
 	public List<Coa_02_AccountGroup> findCoa_02_AccountGroup_By_AccountType(int selAccountType) throws Exception;
 
 }

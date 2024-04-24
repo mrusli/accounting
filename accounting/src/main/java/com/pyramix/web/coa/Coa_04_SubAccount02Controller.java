@@ -115,6 +115,10 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 				lc = initSaveOrEdit(new Listcell(), subAccount02);
 				lc.setParent(item);
 				
+				// cancel
+				lc = initCancel(new Listcell(), subAccount02);
+				lc.setParent(item);
+				
 				item.setValue(subAccount02);
 				
 			}
@@ -371,10 +375,24 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 						// Coa_04_SubAccount02 subAccount02 = listitem.getValue();
 						// log.info("SubAccount01 : "+subAccount02.toString());
 						
+						Coa_04_SubAccount02 coa_04_SubAccount02Proxy =
+								getCoa_04_SubAccount02Dao().findCoa_04_AccountMastersByProxy(subAccount02.getId());
+						if (!coa_04_SubAccount02Proxy.getMasters().isEmpty()) {
+							// re-list
+							listCoaSubAccount02();
+							// raise exception
+							throw new Exception("Cannot Modify. This SubAccount02 is currently used by Master Account.");
+						}
+						
 						Button button = (Button) event.getTarget();
 						if (button.getLabel().compareTo("Modify")==0) {
 							modify_Coa_04_SubAccount02Data(subAccount02);
 							button.setLabel("Update");
+							// enable cancel
+							Button cancelButton = 
+									(Button) listcell.getParent().getChildren().get(7).getFirstChild();
+							cancelButton.setVisible(true);							
+							
 						} else {
 							//
 							Coa_04_SubAccount02 modSubAccount02 =
@@ -449,7 +467,7 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 					private void selectComboitemOfSubAccount01(Coa_04_SubAccount02 subAccount02, Combobox combobox) throws Exception {
 						// obtain the subAccount01 thru proxy
 						Coa_04_SubAccount02 subAccount02Proxy =
-								getCoa_04_SubAccount02Dao().findCoa_03_SubAccount01_ByProxy(subAccount02.getId());
+								getCoa_04_SubAccount02Dao().findCoa_04_SubAccount01_ByProxy(subAccount02.getId());
 						for (Comboitem comboitem : combobox.getItems()) {
 							if (comboitem.getLabel().compareTo(subAccount02Proxy.getSubAccount01().getSubAccount01Number()
 									+"-"+subAccount02Proxy.getSubAccount01().getSubAccount01Name())==0) {
@@ -490,7 +508,7 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 						
 						// check whether this account is used by accountMaster
 						Coa_04_SubAccount02 coa_04_SubAccount02ByProxy =
-								getCoa_04_SubAccount02Dao().findAccountMastersByProxy(subAccount02.getId());
+								getCoa_04_SubAccount02Dao().findCoa_04_AccountMastersByProxy(subAccount02.getId());
 						List<Coa_05_Master> masterList =
 								coa_04_SubAccount02ByProxy.getMasters();
 						masterList.forEach((Coa_05_Master m) -> log.info(m.toString()));
@@ -509,6 +527,24 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 					}
 				};
 			}
+
+			private Listcell initCancel(Listcell listcell, Coa_04_SubAccount02 subAccount02) {
+				Button button = new Button();
+				button.setLabel("Cancel");
+				button.setVisible(subAccount02.getId().compareTo(Long.MIN_VALUE)==0);
+				button.setParent(listcell);
+				button.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+
+					@Override
+					public void onEvent(Event event) throws Exception {
+						// re-list
+						listCoaSubAccount02();
+					}
+				});				
+				
+				return listcell;
+			}			
+			
 		};
 	}
 
@@ -539,7 +575,7 @@ public class Coa_04_SubAccount02Controller extends GFCBaseController {
 
 	private Coa_03_SubAccount01 getCoa_03_SubAccount01ByProxy(Coa_04_SubAccount02 coa_04_SubAccount02) throws Exception {
 		Coa_04_SubAccount02 coa_04_SubAccount02SubAccount01ByProxy =
-				getCoa_04_SubAccount02Dao().findCoa_03_SubAccount01_ByProxy(coa_04_SubAccount02.getId());
+				getCoa_04_SubAccount02Dao().findCoa_04_SubAccount01_ByProxy(coa_04_SubAccount02.getId());
 		Coa_03_SubAccount01 coa_03_SubAccount01 =
 				coa_04_SubAccount02SubAccount01ByProxy.getSubAccount01();
 		

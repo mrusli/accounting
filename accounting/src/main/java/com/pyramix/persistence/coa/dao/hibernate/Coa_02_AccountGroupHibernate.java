@@ -84,7 +84,7 @@ public class Coa_02_AccountGroupHibernate extends DaoHibernate implements Coa_02
 	}
 
 	@Override
-	public Coa_02_AccountGroup findCoa_03_SubAccount01s_ByProxy(long id) throws Exception {
+	public Coa_02_AccountGroup findCoa_02_SubAccount01s_ByProxy(long id) throws Exception {
 		Session session = super.getSessionFactory().openSession();
 		
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();

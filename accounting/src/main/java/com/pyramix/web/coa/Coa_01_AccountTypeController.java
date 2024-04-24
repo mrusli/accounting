@@ -170,7 +170,7 @@ public class Coa_01_AccountTypeController extends GFCBaseController {
 								// re-list
 								listCoaType();
 								// raise exception
-								throw new Exception("Cannot Modify. This account type is currently used AccountGroup.");
+								throw new Exception("Cannot Modify. This account type is currently used by AccountGroup.");
 							}
 							// 
 							Button button = (Button) event.getTarget();

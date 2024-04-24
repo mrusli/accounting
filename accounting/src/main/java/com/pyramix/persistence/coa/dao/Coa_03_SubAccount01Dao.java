@@ -50,13 +50,6 @@ public interface Coa_03_SubAccount01Dao {
 	 * @return {@link Coa_03_SubAccount01}
 	 * @throws Exception
 	 */
-	public Coa_03_SubAccount01 findCoa_04_SubAccount02s_ByProxy(long id) throws Exception;
-	
-	public List<Coa_03_SubAccount01> findCoa_03_SubAccount01_By_AccountGroup(
-			Coa_02_AccountGroup coa_02_AccountGroup) throws Exception;
-
-	
-	public List<Coa_03_SubAccount01> findCoa_03_SubAccount01_By_AccountType_Id(
-			int coa_01_AcountTypeId) throws Exception;
+	public Coa_03_SubAccount01 findCoa_03_SubAccount02s_ByProxy(long id) throws Exception;
 
 }

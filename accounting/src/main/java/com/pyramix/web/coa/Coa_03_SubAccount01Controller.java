@@ -111,9 +111,14 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 				lc = initSaveOrEdit(new Listcell(), subAccount01);
 				lc.setParent(item);
 
+				// cancel
+				lc = initCancel(new Listcell(), subAccount01);
+				lc.setParent(item);				
+				
 				item.setValue(subAccount01);
 			}
-
+			
+			
 			private Listcell initAccountType(Listcell listcell, Coa_03_SubAccount01 subAccount01) throws Exception {
 				if (subAccount01.getId().compareTo(Long.MIN_VALUE)==0) {
 					// READ ONLY -- no modify
@@ -254,7 +259,7 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 						} else {
 							// check is this subAaccount01 currently used in SubAccount02
 							Coa_03_SubAccount01 coa_03_SubAccount01Proxy =
-									getCoa_03_SubAccount01Dao().findCoa_04_SubAccount02s_ByProxy(subAccount01.getId());
+									getCoa_03_SubAccount01Dao().findCoa_03_SubAccount02s_ByProxy(subAccount01.getId());
 							if (!coa_03_SubAccount01Proxy.getSubAccount02s().isEmpty()) {
 								// re-select
 								Coa_03_SubAccount01 subAccount01Proxy =
@@ -405,12 +410,28 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 						// access the listitem and get the existing subAccount01 object
 						// Listitem listitem = (Listitem) listcell.getParent();
 						// Coa_03_SubAccount01 subAccount01 = listitem.getValue();
-						log.info("SubAccount01 : "+subAccount01.toString());
+						// log.info("SubAccount01 : "+subAccount01.toString());
+						
+						Coa_03_SubAccount01 coa_03_SubAccount01Proxy =
+								getCoa_03_SubAccount01Dao().findCoa_03_SubAccount02s_ByProxy(subAccount01.getId());
+						if (!coa_03_SubAccount01Proxy.getSubAccount02s().isEmpty()) {
+							// re-list
+							listCoaSubAccount01();
+							// raise exception
+							throw new Exception("Cannot Modify.  This SubAccount01 is currently used by SubAccount02.");
+						}
+						
 						
 						Button button = (Button) event.getTarget();
+						
 						if (button.getLabel().compareTo("Modify")==0) {
 							modify_Coa_03_SubAccount01Data(subAccount01);
 							button.setLabel("Update");
+							// enable cancel
+							Button cancelButton = 
+									(Button) listcell.getParent().getChildren().get(6).getFirstChild();
+							cancelButton.setVisible(true);							
+							
 						} else {
 							//
 							Coa_03_SubAccount01 modSubAccount01 =
@@ -502,7 +523,7 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 						subAccount01.setLastModified(asDateTime(currentDateTime, zoneId));
 						
 						Coa_03_SubAccount01 coa_03_SubAccount01Proxy =
-								getCoa_03_SubAccount01Dao().findCoa_04_SubAccount02s_ByProxy(subAccount01.getId());
+								getCoa_03_SubAccount01Dao().findCoa_03_SubAccount02s_ByProxy(subAccount01.getId());
 						List<Coa_04_SubAccount02> subAccount02List =
 								coa_03_SubAccount01Proxy.getSubAccount02s();
 						subAccount02List.forEach((Coa_04_SubAccount02 s) -> log.info(s.toString()));
@@ -514,7 +535,7 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 								log.info("set changes to subAccount02 : "+coa_04_SubAccount02.toString());
 																
 								Coa_04_SubAccount02 coa_04_SubAccount02ByProxy =
-										getCoa_04_SubAccount02Dao().findAccountMastersByProxy(coa_04_SubAccount02.getId());
+										getCoa_04_SubAccount02Dao().findCoa_04_AccountMastersByProxy(coa_04_SubAccount02.getId());
 								List<Coa_05_Master> masterList =
 										coa_04_SubAccount02ByProxy.getMasters();
 								masterList.forEach((Coa_05_Master m) -> log.info(m.toString()));
@@ -543,8 +564,26 @@ public class Coa_03_SubAccount01Controller extends GFCBaseController {
 						
 						return subAccount01;
 					}
-				};
-			}			
+				};				
+			}
+
+			private Listcell initCancel(Listcell listcell, Coa_03_SubAccount01 subAccount01) {
+				Button button = new Button();
+				button.setLabel("Cancel");
+				button.setVisible(subAccount01.getId().compareTo(Long.MIN_VALUE)==0);
+				button.setParent(listcell);
+				button.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+
+					@Override
+					public void onEvent(Event event) throws Exception {
+						// re-list
+						listCoaSubAccount01();
+					}
+				});				
+				
+				return listcell;
+			}
+			
 		};
 	}	
 	

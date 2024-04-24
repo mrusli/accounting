@@ -104,6 +104,10 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 				lc = initSaveOrEdit(new Listcell(), accountGroup);
 				lc.setParent(item);
 				
+				// cancel
+				lc = initCancel(new Listcell(), accountGroup);
+				lc.setParent(item);
+				
 				item.setValue(accountGroup);
 			}
 
@@ -235,11 +239,27 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 							// access the listitem and get the existing accountGroup object
 							// Listitem listitem = (Listitem) listcell.getParent();
 							// Coa_02_AccountGroup acctGroup = listitem.getValue();
-							log.info("Existing accountGroup : "+accountGroup.toString());
+							// log.info("Existing accountGroup : "+accountGroup.toString());
+							
+							Coa_02_AccountGroup coa_02_AccountGroupProxy =
+									getCoa_02_AccountGroupDao().findCoa_02_SubAccount01s_ByProxy(accountGroup.getId());
+							if (!coa_02_AccountGroupProxy.getSubAccount01s().isEmpty()) {
+								// re-list
+								listCoaGroup();
+								// raise exception
+								throw new Exception("Cannot Modify.  This account group is currently used by SubAccount01.");
+							}
+							
+							Button button = (Button) event.getTarget();
 							
 							if (button.getLabel().compareTo("Modify")==0) {
 								modify_Coa_02_AccountGroupData(accountGroup);
 								button.setLabel("Update");
+								// enable cancel
+								Button cancelButton = 
+										(Button) listcell.getParent().getChildren().get(5).getFirstChild();
+								cancelButton.setVisible(true);
+								
 							} else {
 								//
 								Coa_02_AccountGroup modAccountGroup =
@@ -270,7 +290,7 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 								public void onEvent(Event event) throws Exception {
 									// check is this acctGroup currently used in SubAccount01
 									Coa_02_AccountGroup coa_02_AccountGroupProxy =
-											getCoa_02_AccountGroupDao().findCoa_03_SubAccount01s_ByProxy(accountGroup.getId());
+											getCoa_02_AccountGroupDao().findCoa_02_SubAccount01s_ByProxy(accountGroup.getId());
 									if (!coa_02_AccountGroupProxy.getSubAccount01s().isEmpty()) {
 										// re-select the comboitem to its previous selection
 										selectComboitemOfAccountType(accountGroup, combobox);
@@ -344,7 +364,7 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 							accountGroup.setLastModified(asDateTime(currentDateTime, zoneId));
 							
 							Coa_02_AccountGroup accountGroupByProxy =
-									getCoa_02_AccountGroupDao().findCoa_03_SubAccount01s_ByProxy(accountGroup.getId());
+									getCoa_02_AccountGroupDao().findCoa_02_SubAccount01s_ByProxy(accountGroup.getId());
 							List<Coa_03_SubAccount01> subAccount01List =
 									accountGroupByProxy.getSubAccount01s();
 							subAccount01List.forEach((Coa_03_SubAccount01 s) -> log.info(s.toString()));
@@ -356,7 +376,7 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 									log.info("set changes to subAccount01 : "+coa_03_SubAccount01);
 									
 									Coa_03_SubAccount01 coa_03_SubAccount01Proxy =
-											getCoa_03_SubAccount01Dao().findCoa_04_SubAccount02s_ByProxy(coa_03_SubAccount01.getId());
+											getCoa_03_SubAccount01Dao().findCoa_03_SubAccount02s_ByProxy(coa_03_SubAccount01.getId());
 									List<Coa_04_SubAccount02> subAccount02List =
 											coa_03_SubAccount01Proxy.getSubAccount02s();
 									subAccount02List.forEach((Coa_04_SubAccount02 s) -> log.info(s.toString()));
@@ -367,7 +387,7 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 											log.info("set changes to subAccount02 : "+coa_04_SubAccount02.toString());
 
 											Coa_04_SubAccount02 coa_04_SubAccount02ByProxy =
-													getCoa_04_SubAccount02Dao().findAccountMastersByProxy(coa_04_SubAccount02.getId());
+													getCoa_04_SubAccount02Dao().findCoa_04_AccountMastersByProxy(coa_04_SubAccount02.getId());
 											List<Coa_05_Master> masterList =
 													coa_04_SubAccount02ByProxy.getMasters();
 											masterList.forEach((Coa_05_Master m) -> log.info(m.toString()));
@@ -402,6 +422,23 @@ public class Coa_02_AccountGroupController extends GFCBaseController {
 				}
 				return listcell;
 			}
+
+			private Listcell initCancel(Listcell listcell, Coa_02_AccountGroup accountGroup) {
+				Button button = new Button();
+				button.setLabel("Cancel");
+				button.setVisible(accountGroup.getId().compareTo(Long.MIN_VALUE)==0);
+				button.setParent(listcell);
+				button.addEventListener(Events.ON_CLICK, new EventListener<Event>() {
+
+					@Override
+					public void onEvent(Event event) throws Exception {
+						// re-list
+						listCoaGroup();
+					}
+				});				
+				
+				return listcell;
+			}			
 			
 		};
 	}

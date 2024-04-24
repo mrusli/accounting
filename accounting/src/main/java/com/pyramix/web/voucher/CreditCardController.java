@@ -192,7 +192,7 @@ public class CreditCardController extends GFCBaseController {
 				getCoa_04_SubAccount02Dao().findCoa_04_SubAccount02ById(KARTU_KREDIT_SUB_ACCOUNT);
 		// proxy
 		Coa_04_SubAccount02 coaMasterByProxy =
-				getCoa_04_SubAccount02Dao().findAccountMastersByProxy(creditCardSubAccount02.getId());
+				getCoa_04_SubAccount02Dao().findCoa_04_AccountMastersByProxy(creditCardSubAccount02.getId());
 		// all creditcard accounts
 		List<Coa_05_Master> creditCardMasterCoaList = coaMasterByProxy.getMasters();
 		

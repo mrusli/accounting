@@ -4,13 +4,13 @@
 		<n:span class="text">COA SubAccount01</n:span>
 	</div>
 	<div style="margin-top: 10px; margin-left: 10px;">
-		<div class="list-header" style="width: 780px">
+		<div class="list-header" style="width: 880px">
 			<div class="list-header-content">
 				<button id="newSubAccount01Button" label="New"></button>
 				<button id="cancelButton" label="Cancel"></button>					
 			</div>
 		</div>
-		<listbox id="coaSubAccount01Listbox" mold="paging" height="500px" width="780px" pageSize="7">
+		<listbox id="coaSubAccount01Listbox" mold="paging" height="500px" width="880px" pageSize="7">
 			<listhead>
 				<listheader label="Account Type Name" width="160px"></listheader>
 				<listheader label="Account Group Name" width="160px"></listheader>
@@ -18,14 +18,9 @@
 				<listheader label="SubAccount01 Name" width="160px"></listheader>
 				<listheader label="COA" width="60px"></listheader>
 				<listheader width="100px"/>
+				<listheader width="100px"/>
 			</listhead>
 		</listbox>
-		<div>
-			<n:p>NOTE:</n:p>
-			<n:p>1. COA SubAccount01 yang sudah dipergunakan oleh COA SubAccount02 TIDAK dapat di ubah / modify !!!</n:p>
-			<n:p>2. Nomor dan Nama SubAccount01 dapat diubah, meskipun sudah dipergunakan oleh COA SubAccount02</n:p>
-			<n:p>3. Nomor dan Nama SubAccount01 akan terupdate secara otomatis di COA SubAccount02</n:p>
-		</div>	
 	</div>		
 </n:section>
 </div>

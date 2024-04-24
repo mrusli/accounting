@@ -72,7 +72,7 @@ public class Coa_03_SubAccount01Hibernate extends DaoHibernate implements Coa_03
 	}
 
 	@Override
-	public Coa_03_SubAccount01 findCoa_04_SubAccount02s_ByProxy(long id) throws Exception {
+	public Coa_03_SubAccount01 findCoa_03_SubAccount02s_ByProxy(long id) throws Exception {
 		Session session = super.getSessionFactory().openSession();
 		
 		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
@@ -93,22 +93,4 @@ public class Coa_03_SubAccount01Hibernate extends DaoHibernate implements Coa_03
 			session.close();
 		}
 	}	
-	
-	@Override
-	public List<Coa_03_SubAccount01> findCoa_03_SubAccount01_By_AccountGroup(Coa_02_AccountGroup coa_02_AccountGroup)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Coa_03_SubAccount01> findCoa_03_SubAccount01_By_AccountType_Id(int coa_01_AcountTypeId)
-			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-
-
 }
