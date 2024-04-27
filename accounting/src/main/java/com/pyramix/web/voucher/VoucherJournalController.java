@@ -67,7 +67,7 @@ public class VoucherJournalController extends GFCBaseController {
 	private Tab dataEntryTab, voucherJournalTab;
 	
 	private List<VoucherJournal> voucherJournalList;
-	private List<VoucherJournal >dataEntryList = new ArrayList<VoucherJournal>();
+	private List<VoucherJournal>dataEntryList = new ArrayList<VoucherJournal>();
 	private ListModelList<VoucherJournal> voucherJournalListModelList, dataEntryListModelList;
 	private List<VoucherJournalDebitCredit> voucherJournalDebitCreditList;
 	private ZoneId zoneId = getZoneId();
@@ -99,7 +99,23 @@ public class VoucherJournalController extends GFCBaseController {
 		userCreate = getUserDao().findUserByUsername(getLoginUsername());
 		dataState = dataStateDef[0]; // set to "View"
 		
+		// list all voucher journals
 		listVoucherJournal();
+		
+		// check if any of the journals NOT posted yet
+		for (VoucherJournal voucherJournal : voucherJournalList) {
+			if (voucherJournal.getVoucherStatus().equals(VoucherStatus.Submitted)) {
+				dataEntryList.add(voucherJournal);
+			}
+		}
+		
+		// if dataEntry List is NOT empty then list
+		if (!dataEntryList.isEmpty()) {
+			// list
+			listDataEntryList();
+			// switch to 'Data-Entry' tab
+			dataEntryTab.setSelected(true);
+		}
 	}
 
 	public void onCheck$defaultCheckbox(Event event) throws Exception {
@@ -132,7 +148,7 @@ public class VoucherJournalController extends GFCBaseController {
 
             // get the property value and print it out
             idxStr = prop.getProperty("voucherjournal_period_index");
-            log.info(idxStr);
+            // log.info(idxStr);
 
 		} catch (IOException ex) {
             ex.printStackTrace();
@@ -499,7 +515,7 @@ public class VoucherJournalController extends GFCBaseController {
 				if (voucherJournal.getId().compareTo(Long.MIN_VALUE)==0) {
 					// do nothing
 				} else {
-					
+					log.info(voucherJournal.getVoucherStatus().toString());
 					if (voucherJournal.getVoucherStatus().equals(VoucherStatus.Submitted)) {
 						// requires user to post
 						Button button = new Button();

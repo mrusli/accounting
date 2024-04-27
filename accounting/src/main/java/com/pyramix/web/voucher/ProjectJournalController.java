@@ -747,6 +747,11 @@ public class ProjectJournalController extends GFCBaseController {
 		projectJournalListModelList.add(0, new ProjectJournal());
 	}
 	
+	public void onClick$cancelProjectJournalButton(Event event) throws Exception {
+		// list projectJournal
+		listProjectJournalTransactions();
+	}
+	
 	public ProjectJournalDao getProjectJournalDao() {
 		return projectJournalDao;
 	}
