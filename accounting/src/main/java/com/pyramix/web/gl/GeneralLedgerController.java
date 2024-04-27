@@ -243,6 +243,19 @@ public class GeneralLedgerController extends GFCBaseController {
 	public void onClick$findGeneralLedgerButton(Event event) throws Exception {
 		// re-list
 		listGeneralLedgers();
+		// find all coa
+		findAllMasterCoa();
+		
+		// reset coaMasterCombobbox
+		coaMasterCombobox.getItems().clear();
+		
+		// populate the combobox
+		setupCoaMasterCombobox();
+		coaMasterCombobox.setSelectedIndex(0);
+		
+		// calc the total
+		calculateTotalDebitCredit();		
+		
 	}
 	
 	public void onClick$filterButton(Event event) throws Exception {

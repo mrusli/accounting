@@ -260,10 +260,10 @@ public class PettyCashController extends GFCBaseController {
 		Month month = Month.of(selPeriod+1);
 		// month to localdate
 		LocalDate periodDate = LocalDate.of(START_YEAR, month, 1);
-		log.info("perido date: "+periodDate);
+		// log.info("perido date: "+periodDate);
 		// periodDate minus 1 month
 		periodDate = periodDate.minusMonths(1);
-		log.info("period date (last month): "+periodDate);
+		// log.info("period date (last month): "+periodDate);
 		
 		// return closingDate
 		return periodDate.with(TemporalAdjusters.lastDayOfMonth());
