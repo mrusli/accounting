@@ -261,7 +261,7 @@ public class CreditCardController extends GFCBaseController {
 		// month to localdate
 		LocalDate periodDate = LocalDate.of(START_YEAR, month, 1);
 		// periodDate minus 30 days
-		periodDate = periodDate.minusDays(30);
+		periodDate = periodDate.minusMonths(1);
 		
 		// return closingDate
 		return periodDate.with(TemporalAdjusters.lastDayOfMonth());
