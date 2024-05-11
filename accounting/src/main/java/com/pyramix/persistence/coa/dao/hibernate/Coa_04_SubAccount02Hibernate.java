@@ -5,7 +5,6 @@ import java.util.List;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 
-import com.pyramix.domain.coa.Coa_03_SubAccount01;
 import com.pyramix.domain.coa.Coa_04_SubAccount02;
 import com.pyramix.persistence.coa.dao.Coa_04_SubAccount02Dao;
 import com.pyramix.persistence.common.dao.hibernate.DaoHibernate;

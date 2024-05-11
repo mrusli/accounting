@@ -2,8 +2,6 @@ package com.pyramix.web.serial;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
-
 import com.pyramix.domain.voucher.VoucherSerialNumber;
 import com.pyramix.domain.voucher.VoucherType;
 import com.pyramix.persistence.voucher.dao.VoucherSerialNumberDao;
@@ -18,7 +16,7 @@ public class SerialNumberGenerator extends GFCBaseController {
 
 	private VoucherSerialNumberDao voucherSerialNumberDao;
 
-	private static final Logger log = Logger.getLogger(SerialNumberGenerator.class);
+	// private static final Logger log = Logger.getLogger(SerialNumberGenerator.class);
 	
 	public int getSerialNumber(VoucherType voucherType, Date currentDate) throws Exception {
 		int serialNum = 1;

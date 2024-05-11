@@ -2,7 +2,6 @@ package com.pyramix.persistence.coa.dao;
 
 import java.util.List;
 
-import com.pyramix.domain.coa.Coa_03_SubAccount01;
 import com.pyramix.domain.coa.Coa_04_SubAccount02;
 
 public interface Coa_04_SubAccount02Dao {
