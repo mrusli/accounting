@@ -14,6 +14,7 @@ const body = document.querySelector("body"),
 	panel = body.querySelector(".panel-section");
 toggle.addEventListener("click", () => {
 	sidebar.classList.toggle("close");
+	panel.classList.toggle("open");	
 });
 function logoutClick() {
 	zAu.send(new zk.Event(zk.Widget.$(this), 'onClickLogout', 'Logout...'));

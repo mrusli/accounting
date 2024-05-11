@@ -310,6 +310,9 @@ header .image-text .header-text {
     left: 78px;
     width: calc(100% - 78px);
 }
+.panel-section.open {
+	left: 260px;
+}
 .panel-section .panel-content {
 	margin-left: 20px;
 	margin-top: 5px;

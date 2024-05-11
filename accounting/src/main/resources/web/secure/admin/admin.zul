@@ -2,22 +2,6 @@
 	<n:section class="panel-section">
 		<div class="panel-content">
 			<n:span class="text">Admin</n:span>
-		</div>
-<tabbox>
-	<tabs>
-		<tab label="Data Reset" />
-	</tabs>
-	<tabpanels id="pnls0">
-		<tabpanel>
-			<div>
-				RESET ALL Voucher Journal 
-				<button id="resetVoucherJournalButton" label="RESET"></button>
-			</div>
-			<div>
-				<label id="resetVoucherJournalStatusLabel"></label>
-			</div>
-		</tabpanel>
-	</tabpanels>
-</tabbox>		
+		</div>	
 	</n:section>
 </div>
