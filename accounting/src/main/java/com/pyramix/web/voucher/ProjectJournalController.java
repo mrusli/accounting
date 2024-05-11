@@ -63,6 +63,8 @@ public class ProjectJournalController extends GFCBaseController {
 	
 	private Combobox periodCombobox, projectCombobox;
 	private Listbox projectJournalListbox;
+	private Label totalForLastPeriodLabel, totalForThisPeriodLabel,
+		totalForAllPeriodLabel;
 	
 	private User userCreate;
 	private LocalDate periodStartDate, periodEndDate;
@@ -726,6 +728,64 @@ public class ProjectJournalController extends GFCBaseController {
 		};
 	}
 
+	public void onAfterRender$projectJournalListbox(Event event) throws Exception {
+		BigDecimal currentTotalNominal = BigDecimal.ZERO;
+		
+		for (ProjectJournal projectJournal : projectJournalList) {
+			currentTotalNominal = currentTotalNominal.add(projectJournal.getTheSumOf());
+		}
+		
+		totalForThisPeriodLabel.setValue("This Period Total: "+
+				toDecimalFormat(currentTotalNominal, getLocale(), "###.###.###,-"));
+		
+		// calculate previous periods totals -- starting from period 02 will have previous total
+		BigDecimal prevTotalNominal = calculatePreviousPeriodsTotals();
+
+		// total for all periods
+		BigDecimal totalForAllPeriods = currentTotalNominal.add(prevTotalNominal);
+		
+		totalForAllPeriodLabel.setValue("Total Up to This Period: "+
+				toDecimalFormat(totalForAllPeriods, getLocale(), "###.###.###,-"));
+	}
+
+	private BigDecimal calculatePreviousPeriodsTotals() throws Exception {
+		if (periodCombobox.getSelectedIndex()==0) {
+			// do nothing -- reset the label
+			totalForLastPeriodLabel.setValue("Previous Period(s) Total: "+
+					toDecimalFormat(BigDecimal.ZERO, getLocale(), "###.###.###,-"));
+			return BigDecimal.ZERO;
+		}
+		
+		int startPeriod = 0;
+		Month startMonth = Month.of(startPeriod+1);
+		LocalDate prevPeriodTotalStartDate = LocalDate.of(START_YEAR, startMonth, 1);		
+		
+		int lastPeriod = periodCombobox.getSelectedIndex();
+		Month month = Month.of(lastPeriod==0 ? 1 : lastPeriod);
+		LocalDate localDate = LocalDate.of(START_YEAR, month, 1);
+		LocalDate prevPeriodTotalEndDate = localDate.with(TemporalAdjusters.lastDayOfMonth());
+		
+		log.info("prevPeriodTotalStartDate: "+prevPeriodTotalStartDate);
+		log.info("prevPeriodTotalEndDate: "+prevPeriodTotalEndDate);
+		
+		Project selProject =
+				projectCombobox.getSelectedItem().getValue();
+
+		List<ProjectJournal> prevJournalList =
+				getProjectJournalDao().findAllProjectJournalsByDate(selProject, asDate(prevPeriodTotalStartDate, getZoneId()), 
+						asDate(prevPeriodTotalEndDate, getZoneId()));
+		
+		BigDecimal prevTotalNominal = BigDecimal.ZERO;
+		
+		for (ProjectJournal projectJournal : prevJournalList) {
+			prevTotalNominal = prevTotalNominal.add(projectJournal.getTheSumOf());
+		}
+
+		totalForLastPeriodLabel.setValue("Previous Period(s) Total: "+
+				toDecimalFormat(prevTotalNominal, getLocale(), "###.###.###,-"));
+		
+		return prevTotalNominal;
+	}
 	
 	private VoucherSerialNumber getVoucherSerialNumber(VoucherType voucherType, Date currentDate) throws Exception {
 		int serialNum = getSerialNumberGenerator().getSerialNumber(voucherType, currentDate);

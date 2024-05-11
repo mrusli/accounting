@@ -17,8 +17,9 @@
 					<button id="cancelProjectJournalButton" label="Cancel"></button>
 				</div>
 				<div class="list-header-content">
-					<label id="begBalanceLabel"></label>
-					<label id="endBalanceLabel"></label>
+					<label id="totalForLastPeriodLabel"></label>
+					<label id="totalForThisPeriodLabel"></label>
+					<label id="totalForAllPeriodLabel"></label>
 				</div>
 			</div>
 			<listbox id="projectJournalListbox" mold="paging" height="500px" width="1550px" pageSize="7">
