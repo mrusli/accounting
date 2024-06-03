@@ -59,6 +59,10 @@
     	<property name="sessionFactory" ref="sessionFactory"></property>
     </bean>
 
+	<bean id="creditCardCoaDao" class="com.pyramix.persistence.creditcardcoa.dao.hibernate.CreditCardCoaHibernate">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+
 	<bean id="projectDao" class="com.pyramix.persistence.project.dao.hibernate.ProjectHibernate">
 		<property name="sessionFactory" ref="sessionFactory"></property>
 	</bean>

@@ -27,7 +27,8 @@
 		
 		<!-- credit card -->
 		<mapping class="com.pyramix.domain.creditcard.CreditCard"/>
-		<mapping class="com.pyramix.domain.creditcard.CreditCardDebitCredit"/>		
+		<mapping class="com.pyramix.domain.creditcard.CreditCardDebitCredit"/>
+		<mapping class="com.pyramix.domain.creditcard.CreditCardCoa"/>		
 		
 		<!-- project -->
 		<mapping class="com.pyramix.domain.project.Project"/>
