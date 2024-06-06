@@ -653,7 +653,7 @@ public class CreditCardController extends GFCBaseController {
 		Comboitem comboitem;
 		Coa_05_Master coaMaster;
 		
-		Long[] expenseAcctIds = { 75L, 76L, 43L, 68L, 72L, 74L, 85L, 62L, 86L, 87L, 88L, 89L, 90L, 91L, 92L, 93L };
+		Long[] expenseAcctIds = { 75L, 76L, 43L, 68L, 72L, 74L, 85L, 62L, 86L, 87L, 88L, 89L, 90L, 91L, 92L, 93L, 23L, 94L };
 		
 		for(Long id : expenseAcctIds) {
 			coaMaster = getCoa_05_AccountMasterDao().findCoa_05_MasterById(id);
