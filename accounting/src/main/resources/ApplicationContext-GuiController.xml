@@ -137,7 +137,7 @@
 	<!-- Admin -->
 	
 	<bean id="adminController" class="com.pyramix.web.admin.AdminController" scope="prototype" parent="basisController">
-		<property name="voucherJournalDao" ref="voucherJournalDao"></property>
+		<property name="creditCardCoaDao" ref="creditCardCoaDao"></property>
 	</bean>
 	
 	<!-- Error -->

@@ -2,6 +2,22 @@
 	<n:section class="panel-section">
 		<div class="panel-content">
 			<n:span class="text">Admin</n:span>
-		</div>	
+		</div>
+		<div style="margin-top: 10px; margin-left: 10px;">
+			<div class="list-header" style="width: 850px">
+				<div class="list-header-content">
+					Chart of Accounts for Credit Cards
+					<button id="addAccountMasterButton" label="Add"/>
+				</div>
+			</div>
+			<listbox id="creditCardCoaListbox" mold="paging" height="500px" width="850px" pageSize="7">
+				<listhead>
+					<listheader label="Acc Master" width="90px"></listheader>
+					<listheader label="Acc Master Name" width="160px"></listheader>
+					<listheader label="Active" width="80px"></listheader>
+					<listheader/>					
+				</listhead>
+			</listbox>
+		</div>			
 	</n:section>
 </div>
