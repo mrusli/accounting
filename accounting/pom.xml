@@ -13,7 +13,7 @@
 
 	<groupId>com.pyramix.web</groupId>
 	<artifactId>accounting</artifactId>
-	<version>2.0.3</version>
+	<version>2.0.4</version>
 
 	<name>accounting</name>
 	<description>Pyramix Accounting Application</description>

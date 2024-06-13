@@ -93,7 +93,8 @@
 		<property name="creditCardDao" ref="creditCardDao"></property>
 		<property name="userDao" ref="userDao"></property>
 		<property name="serialNumberGenerator" ref="serialNumberGenerator"></property>
-		<property name="generalLedgerDao" ref="generalLedgerDao"></property>			
+		<property name="generalLedgerDao" ref="generalLedgerDao"></property>
+		<property name="creditCardCoaDao" ref="creditCardCoaDao"></property>			
 	</bean>
 
 	<bean id="projectJournalController" class="com.pyramix.web.voucher.ProjectJournalController" scope="prototype" parent="basisController">

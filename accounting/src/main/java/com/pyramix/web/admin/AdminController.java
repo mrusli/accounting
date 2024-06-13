@@ -1,8 +1,9 @@
 package com.pyramix.web.admin;
 
-import java.util.Collections;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.zkoss.zk.ui.Executions;
@@ -33,6 +34,9 @@ public class AdminController extends GFCBaseController {
 	
 	private Listbox creditCardCoaListbox;
 	
+	private ZoneId zoneId = getZoneId();
+	private LocalDate todayDate = getLocalDate(zoneId);
+	
 	private static final Logger log = Logger.getLogger(AdminController.class);
 	
 	public void onCreate$adminPanel(Event event) throws Exception {
@@ -44,6 +48,10 @@ public class AdminController extends GFCBaseController {
 	private void listCreditCardCoa() throws Exception {
 		List<CreditCardCoa> creditCardCoaList =
 				getCreditCardCoaDao().findAllCreditCardCoa();
+		
+		creditCardCoaList.sort((c1, c2) -> {
+			return c1.getMasterCoaComp().compareTo(c2.getMasterCoaComp());
+		});
 		
 		ListModelList<CreditCardCoa> creditCardCoaListModelList =
 				new ListModelList<CreditCardCoa>(creditCardCoaList);
@@ -73,12 +81,12 @@ public class AdminController extends GFCBaseController {
 				lc.setParent(item);
 				
 				// Remove
-				lc = initRemove(new Listcell());
+				lc = initRemove(new Listcell(), creditCardCoa);
 				lc.setParent(item);
 				
 			}
 
-			private Listcell initRemove(Listcell listcell) {
+			private Listcell initRemove(Listcell listcell, CreditCardCoa creditCardCoa) {
 				Button button = new Button();
 				button.setLabel("Remove");
 				button.setParent(listcell);
@@ -87,6 +95,12 @@ public class AdminController extends GFCBaseController {
 					@Override
 					public void onEvent(Event event) throws Exception {
 						log.info("Remove Button Clicked...");
+						
+						// remove
+						getCreditCardCoaDao().delete(creditCardCoa);
+						
+						// re-list
+						listCreditCardCoa();
 						
 					}
 				});
@@ -108,9 +122,41 @@ public class AdminController extends GFCBaseController {
 			public void onEvent(Event event) throws Exception {
 				Coa_05_Master masterCoa = (Coa_05_Master) event.getData();
 				log.info(masterCoa.toString());
+				
+				// create a new creditCardCoa object
+				CreditCardCoa creditCardCoa =  createMasterCoaCreditCard(masterCoa);
+				
+				// save
+				getCreditCardCoaDao().save(creditCardCoa);
+				
+				// re-list
+				listCreditCardCoa();
 			}
 		});
 		
+	}
+	
+	protected CreditCardCoa createMasterCoaCreditCard(Coa_05_Master masterCoa) {
+		CreditCardCoa creditCardCoa = new CreditCardCoa();
+		
+		creditCardCoa.setCreateDate(asDate(todayDate, zoneId));
+		LocalDateTime currentDateTime = getLocalDateTime(zoneId);
+		creditCardCoa.setLastModified(asDateTime(currentDateTime, zoneId));
+		creditCardCoa.setMasterCoaName(masterCoa.getMasterCoaName());
+		creditCardCoa.setTypeCoaNumber(masterCoa.getTypeCoaNumber());
+		creditCardCoa.setGroupCoaNumber(masterCoa.getSubaccount01CoaNumber());
+		creditCardCoa.setSubaccount01CoaNumber(masterCoa.getSubaccount01CoaNumber());
+		creditCardCoa.setSubaccount02CoaNumber(masterCoa.getSubaccount02CoaNumber());
+		creditCardCoa.setMasterCoaNumber(masterCoa.getMasterCoaNumber());
+		creditCardCoa.setMasterCoaComp(masterCoa.getMasterCoaComp());
+		creditCardCoa.setCreditAccount(masterCoa.isCreditAccount());
+		creditCardCoa.setRestricted(masterCoa.isRestricted());
+		// default set to active
+		creditCardCoa.setActive(true);
+		// set ref
+		creditCardCoa.setCoa_05_Master(masterCoa);
+		
+		return creditCardCoa;
 	}
 	
 	public CreditCardCoaDao getCreditCardCoaDao() {

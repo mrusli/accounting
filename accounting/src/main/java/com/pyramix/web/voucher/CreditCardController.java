@@ -35,6 +35,7 @@ import org.zkoss.zul.Textbox;
 import com.pyramix.domain.coa.Coa_04_SubAccount02;
 import com.pyramix.domain.coa.Coa_05_Master;
 import com.pyramix.domain.creditcard.CreditCard;
+import com.pyramix.domain.creditcard.CreditCardCoa;
 import com.pyramix.domain.creditcard.CreditCardDebitCredit;
 import com.pyramix.domain.gl.Balance;
 import com.pyramix.domain.gl.GeneralLedger;
@@ -45,6 +46,7 @@ import com.pyramix.domain.voucher.VoucherType;
 import com.pyramix.persistence.coa.dao.Coa_04_SubAccount02Dao;
 import com.pyramix.persistence.coa.dao.Coa_05_AccountMasterDao;
 import com.pyramix.persistence.creditcard.dao.CreditCardDao;
+import com.pyramix.persistence.creditcardcoa.dao.CreditCardCoaDao;
 import com.pyramix.persistence.gl.dao.BalanceDao;
 import com.pyramix.persistence.gl.dao.GeneralLedgerDao;
 import com.pyramix.persistence.user.dao.UserDao;
@@ -65,6 +67,7 @@ public class CreditCardController extends GFCBaseController {
 	private UserDao userDao;
 	private SerialNumberGenerator serialNumberGenerator;
 	private GeneralLedgerDao generalLedgerDao;
+	private CreditCardCoaDao creditCardCoaDao;
 	
 	private Combobox periodCombobox, ccAcctCombobox;
 	private Listbox creditCardListbox;
@@ -369,7 +372,7 @@ public class CreditCardController extends GFCBaseController {
 			private Listcell initCOA(Listcell listcell, CreditCard creditCard) throws Exception {
 				if (creditCard.getId().compareTo(Long.MIN_VALUE)==0) {
 					// new
-					setupCoaSelection(listcell, creditCard);
+					setupCoaSelection02(listcell, creditCard);
 				} else {
 					listcell.setLabel(creditCard.getMasterCoa().getMasterCoaComp()
 							+"-"+creditCard.getMasterCoa().getMasterCoaName());
@@ -456,7 +459,10 @@ public class CreditCardController extends GFCBaseController {
 						(Decimalbox) listcell.getParent().getChildren().get(2).getFirstChild();
 				Combobox combobox =
 						(Combobox) listcell.getParent().getChildren().get(3).getFirstChild();
-				Coa_05_Master masterCoaToDebit = combobox.getSelectedItem().getValue();
+				// Coa_05_Master masterCoaToDebit = combobox.getSelectedItem().getValue();
+				// get creditCardCoa
+				CreditCardCoa creditCardCoa = combobox.getSelectedItem().getValue();
+				
 				Textbox textboxTransInfo =
 						(Textbox) listcell.getParent().getChildren().get(4).getFirstChild();
 				Textbox textboxRef =
@@ -466,7 +472,7 @@ public class CreditCardController extends GFCBaseController {
 				//	set
 				creditCard.setTransactionDate(datebox.getValue());
 				creditCard.setTheSumOf(decimalbox.getValue());
-				creditCard.setMasterCoa(masterCoaToDebit);
+				creditCard.setMasterCoa(creditCardCoa.getCoa_05_Master());
 				creditCard.setCreditCardMasterCoa(masterCoaToCredit);
 				creditCard.setTransactionDescription(textboxTransInfo.getValue());
 				creditCard.setDocumentRef(textboxRef.getValue());
@@ -475,7 +481,7 @@ public class CreditCardController extends GFCBaseController {
 					creditCard.setVoucherNumber(getVoucherSerialNumber(voucherType, datebox.getValue()));
 					creditCard.setCreateDate(asDate(todayDate, zoneId));
 					// create creditCardDebitCredit list
-					creditCard.setCreditCardDebitCredits(getCreditCardDebitCredits(creditCard, masterCoaToDebit));
+					creditCard.setCreditCardDebitCredits(getCreditCardDebitCredits(creditCard, creditCardCoa.getCoa_05_Master()));
 				} else {
 					log.info("update creditCardDebitCreditList");
 				}
@@ -632,6 +638,7 @@ public class CreditCardController extends GFCBaseController {
 	}	
 	
 	
+	
 	/**
 	 * Expense Account - to Debit (DB)
 	 * 
@@ -664,6 +671,27 @@ public class CreditCardController extends GFCBaseController {
 			comboitem.setParent(combobox);			
 		}
 	}
+	
+	private void setupCoaSelection02(Listcell listcell, CreditCard creditCard) throws Exception {
+		Combobox combobox = new Combobox();
+		combobox.setWidth("230px");
+		combobox.setParent(listcell);
+		
+		Comboitem comboitem;
+		
+		// list creditcardcoa 'active' ONLY
+		List<CreditCardCoa> creditCardCoaList = getCreditCardCoaDao().findAllActiveCreditCardCoa();
+		// sort
+		creditCardCoaList.sort((c1, c2) -> c1.getMasterCoaComp().compareTo(c2.getMasterCoaComp()));
+		
+		for (CreditCardCoa ccCoa : creditCardCoaList) {
+			comboitem = new Comboitem();
+			comboitem.setLabel(ccCoa.getMasterCoaComp()
+					+"-"+ccCoa.getMasterCoaName());
+			comboitem.setValue(ccCoa);
+			comboitem.setParent(combobox);				
+		}
+	}	
 	
 	protected void setupTextbox(Listcell listcell, String description) {
 		Textbox textbox = new Textbox();
@@ -805,5 +833,13 @@ public class CreditCardController extends GFCBaseController {
 
 	public void setCoa_04_SubAccount02Dao(Coa_04_SubAccount02Dao coa_04_SubAccount02Dao) {
 		this.coa_04_SubAccount02Dao = coa_04_SubAccount02Dao;
+	}
+
+	public CreditCardCoaDao getCreditCardCoaDao() {
+		return creditCardCoaDao;
+	}
+
+	public void setCreditCardCoaDao(CreditCardCoaDao creditCardCoaDao) {
+		this.creditCardCoaDao = creditCardCoaDao;
 	}
 }

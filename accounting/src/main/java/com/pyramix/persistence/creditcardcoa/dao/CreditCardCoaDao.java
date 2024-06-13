@@ -31,6 +31,16 @@ public interface CreditCardCoaDao {
 	 */
 	public void update(CreditCardCoa creditCardCoa) throws Exception;
 	
-	
+	/**
+	 * @param creditCardCoa
+	 * @throws Exception
+	 */
+	public void delete(CreditCardCoa creditCardCoa) throws Exception;
+
+	/**
+	 * @return {@link List} of {@link CreditCardCoaDao}
+	 * @throws Exception
+	 */
+	public List<CreditCardCoa> findAllActiveCreditCardCoa() throws Exception;
 	
 }

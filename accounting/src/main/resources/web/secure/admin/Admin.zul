@@ -4,20 +4,20 @@
 			<n:span class="text">Admin</n:span>
 		</div>
 		<div style="margin-top: 10px; margin-left: 10px;">
-			<div class="list-header" style="width: 850px">
-				<div class="list-header-content">
-					Chart of Accounts for Credit Cards
+			<div class="list-header-center" style="width: 580px">
+				<n:div class="list-header-content">
+					<n:span class="text">Chart of Accounts for Credit Cards</n:span>
 					<button id="addAccountMasterButton" label="Add"/>
-				</div>
+				</n:div>
 			</div>
-			<listbox id="creditCardCoaListbox" mold="paging" height="500px" width="850px" pageSize="7">
+			<listbox id="creditCardCoaListbox" mold="paging" height="500px" width="580px" pageSize="7">
 				<listhead>
 					<listheader label="Acc Master" width="90px"></listheader>
-					<listheader label="Acc Master Name" width="160px"></listheader>
+					<listheader label="Acc Master Name" width="260px"></listheader>
 					<listheader label="Active" width="80px"></listheader>
 					<listheader/>					
 				</listhead>
-			</listbox>
+			</listbox>		
 		</div>			
 	</n:section>
 </div>
