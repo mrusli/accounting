@@ -108,6 +108,7 @@
 	
 	<bean id="generalLedgerController" class="com.pyramix.web.gl.GeneralLedgerController" scope="prototype" parent="basisController">
 		<property name="generalLedgerDao" ref="generalLedgerDao"></property>
+		<property name="coa_01_AccountTypeDao" ref="coa_01_AccountTypeDao"></property>
 	</bean>
 	
 	<bean id="journalActivityController" class="com.pyramix.web.gl.JournalActivityController" scope="prototype" parent="basisController">

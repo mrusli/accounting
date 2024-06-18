@@ -1,23 +1,30 @@
 package com.pyramix.web.gl;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.jxls.builder.JxlsOutputFile;
+import org.jxls.transform.poi.JxlsPoiTemplateFillerBuilder;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -28,9 +35,15 @@ import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabbox;
+import org.zkoss.zul.Tabs;
+import org.zkoss.zul.Timer;
 
+import com.pyramix.domain.coa.Coa_01_AccountType;
 import com.pyramix.domain.coa.Coa_05_Master;
 import com.pyramix.domain.gl.GeneralLedger;
+import com.pyramix.persistence.coa.dao.Coa_01_AccountTypeDao;
 import com.pyramix.persistence.gl.dao.GeneralLedgerDao;
 import com.pyramix.web.common.GFCBaseController;
 
@@ -42,11 +55,14 @@ public class GeneralLedgerController extends GFCBaseController {
 	private static final long serialVersionUID = -4132805928767688796L;
 
 	private GeneralLedgerDao generalLedgerDao;
+	private Coa_01_AccountTypeDao coa_01_AccountTypeDao;
 	
 	private Combobox periodCombobox, coaMasterCombobox;
 	private Datebox startDatebox, endDatebox;
 	private Listbox generalLedgerListbox;
-	private Label totalLabel;
+	private Label totalLabel, exportExcelLabel;
+	private Tabbox coaTabbox;
+	private Timer timer;
 	
 	private List<GeneralLedger> generalLedgers;
 	private List<Coa_05_Master> coaMasterList;
@@ -70,6 +86,11 @@ public class GeneralLedgerController extends GFCBaseController {
 		
 		setGeneralLedgerStartAndEndDate();
 		
+		// set coa type for the tabbox
+		setupCoaTypeTabbox();
+
+		// set to tab index 0 ('All')
+		coaTabbox.setSelectedIndex(0);
 		// list
 		listGeneralLedgers();
 		
@@ -147,6 +168,30 @@ public class GeneralLedgerController extends GFCBaseController {
 		endDatebox.setValue(asDate(endLocalDate, zoneId));
 	}	
 	
+	private void setupCoaTypeTabbox() throws Exception {
+		Tabs tabs = new Tabs();
+		tabs.setParent(coaTabbox);
+		
+		Tab tab;
+		
+		// 'All' tab
+		tab = new Tab();
+		tab.setLabel("All");
+		tab.setValue(null);
+		tab.setParent(tabs);		
+		
+		List<Coa_01_AccountType> accountTypeList =
+				getCoa_01_AccountTypeDao().findAllCoa_01_AccountType();
+		
+		for (Coa_01_AccountType accountType : accountTypeList) {
+			tab = new Tab();		
+			tab.setLabel(accountType.getAccountTypeName());
+			tab.setValue(accountType);
+			tab.setParent(tabs);			
+		}
+
+	}	
+	
 	private void listGeneralLedgers() throws Exception {
 		generalLedgers =
 				getGeneralLedgerDao().findAllGeneralLedgerByStartEndDate(
@@ -169,7 +214,29 @@ public class GeneralLedgerController extends GFCBaseController {
 				new ListModelList<GeneralLedger>(generalLedgers);
 		generalLedgerListbox.setModel(generalLedgerModelList);
 		generalLedgerListbox.setItemRenderer(getGeneralLedgerListitemRenderer());
-	}	
+	}
+	
+	private void listGeneralLedgersByAccountType(Coa_01_AccountType accountType) throws Exception {
+		generalLedgers =
+				getGeneralLedgerDao().findAllGeneralLedgerByStartEndDate(
+						startDatebox.getValue(), endDatebox.getValue());
+		
+		List<GeneralLedger> glByAccountTypeList = new ArrayList<GeneralLedger>();
+		
+		for (GeneralLedger gl : generalLedgers) {
+			if (gl.getMasterCoa().getTypeCoaNumber()==accountType.getAccountTypeNumber()) {
+				glByAccountTypeList.add(gl);
+			}
+		}
+		
+		generalLedgers.clear();
+		generalLedgers.addAll(glByAccountTypeList);
+		
+		ListModelList<GeneralLedger> generalLedgerModelList =
+				new ListModelList<GeneralLedger>(generalLedgers);
+		generalLedgerListbox.setModel(generalLedgerModelList);
+		generalLedgerListbox.setItemRenderer(getGeneralLedgerListitemRenderer());
+	}
 	
 	private void findAllMasterCoa() {
 		Set<Coa_05_Master> coaMasterSet = new HashSet<Coa_05_Master>();
@@ -179,12 +246,17 @@ public class GeneralLedgerController extends GFCBaseController {
 		// covert to arraylist
 		coaMasterList = new ArrayList<Coa_05_Master>(coaMasterSet);
 		// sorting the list
-		Collections.sort(coaMasterList, Comparator.comparing(Coa_05_Master::getMasterCoaComp));
+		Collections.sort(
+				coaMasterList, 
+				Comparator.comparing(Coa_05_Master::getMasterCoaComp));
 		
 		// coaMasterList.forEach(c -> log.info(c.getMasterCoaComp()));
 	}	
 	
 	private void setupCoaMasterCombobox() {
+		// reset
+		coaMasterCombobox.getItems().clear();
+		
 		Comboitem comboitem;
 		
 		// all - default
@@ -241,6 +313,9 @@ public class GeneralLedgerController extends GFCBaseController {
 	}
 	
 	public void onClick$findGeneralLedgerButton(Event event) throws Exception {
+		// coaTabbox reset
+		coaTabbox.setSelectedIndex(0);
+		
 		// re-list
 		listGeneralLedgers();
 		// find all coa
@@ -254,11 +329,13 @@ public class GeneralLedgerController extends GFCBaseController {
 		coaMasterCombobox.setSelectedIndex(0);
 		
 		// calc the total
-		calculateTotalDebitCredit();		
-		
+		calculateTotalDebitCredit();
 	}
 	
 	public void onClick$filterButton(Event event) throws Exception {
+		// set to tab "All"
+		// coaTabbox.setSelectedIndex(0);
+		
 		if (coaMasterCombobox.getSelectedIndex()==0) {
 			// all
 			listGeneralLedgers();
@@ -266,6 +343,48 @@ public class GeneralLedgerController extends GFCBaseController {
 			// by COA
 			listGeneralLedgersByCoa();			
 		}
+		// calc
+		calculateTotalDebitCredit();
+	}
+	
+	public void onSelect$coaTabbox(Event event) throws Exception {
+		int tabIndex = coaTabbox.getSelectedIndex();
+
+		// reset the filter account
+		coaMasterCombobox.setSelectedIndex(0);
+		
+		if (tabIndex==0) {
+			log.info("All tab selected...");
+			
+			// all
+			listGeneralLedgers();
+			
+			// find all coa
+			findAllMasterCoa();
+			
+			// populate the combobox
+			setupCoaMasterCombobox();
+			coaMasterCombobox.setSelectedIndex(0);			
+			
+		} else {
+			Tab selTab = coaTabbox.getSelectedTab();
+			
+			// value of the selected tab
+			Coa_01_AccountType accountType = selTab.getValue();
+			log.info(accountType.getAccountTypeName()+" tab selected...");
+			
+			// list by accountType
+			listGeneralLedgersByAccountType(accountType);
+			
+			// find all coa
+			findAllMasterCoa();
+			
+			// populate the combobox
+			setupCoaMasterCombobox();
+			coaMasterCombobox.setSelectedIndex(0);
+			
+		}
+		
 		// calc
 		calculateTotalDebitCredit();
 	}
@@ -283,11 +402,64 @@ public class GeneralLedgerController extends GFCBaseController {
 				+" "+"Total Credit: "+toDecimalFormat(totalCredit, getLocale(), "###.###.###,-"));
 	}	
 	
+	public void onClick$exportExcelButton(Event event) throws Exception {
+		exportExcelLabel.setValue("Please wait...");
+
+		// NOTE: Jxls NOT working with Java Record
+		
+		// setup filename with timestamp
+		LocalDateTime currentDateTime = getLocalDateTime(zoneId);
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", getLocale());
+		String timestamp = currentDateTime.format(formatter);
+		// log.info(timestamp);
+		String filename = "generalLedger"+timestamp+".xlsx";
+		
+		List<LedgerReport> ledgerReports = new ArrayList<LedgerReport>();
+		LedgerReport ledgerReport;
+		for (GeneralLedger gl : generalLedgers) {
+			ledgerReport = new LedgerReport(
+						"'"+dateToStringDisplay(asLocalDate(gl.getTransactionDate()), "yyyy-MM-dd", getLocale()),
+						gl.getMasterCoa().getMasterCoaComp()+"-"+gl.getMasterCoa().getMasterCoaName(),
+						gl.getTransactionDescription(),
+						gl.getDebitAmount(),
+						gl.getCreditAmount()
+					);
+			ledgerReports.add(ledgerReport);
+		}
+		
+		ledgerReports.forEach(l -> log.info(l.toString()));
+		
+		// file output info
+		log.info("Export to /pyramix/excel/"+filename);
+		
+		Map<String, Object> data = new HashMap<>();
+		data.put("ledgerReports", ledgerReports);
+		JxlsPoiTemplateFillerBuilder.newInstance()
+			.withTemplate("/pyramix/template.xlsx")
+			.build()
+			.fill(data, new JxlsOutputFile(new File("/pyramix/excel/"+filename)));
+
+		exportExcelLabel.setValue("Export to /pyramix/excel/"+filename);
+		timer.start();		
+	}
+	
+	public void onTimer$timer(Event event) throws Exception {
+		exportExcelLabel.setValue("");
+	}
+	
 	public GeneralLedgerDao getGeneralLedgerDao() {
 		return generalLedgerDao;
 	}
 
 	public void setGeneralLedgerDao(GeneralLedgerDao generalLedgerDao) {
 		this.generalLedgerDao = generalLedgerDao;
+	}
+
+	public Coa_01_AccountTypeDao getCoa_01_AccountTypeDao() {
+		return coa_01_AccountTypeDao;
+	}
+
+	public void setCoa_01_AccountTypeDao(Coa_01_AccountTypeDao coa_01_AccountTypeDao) {
+		this.coa_01_AccountTypeDao = coa_01_AccountTypeDao;
 	}
 }

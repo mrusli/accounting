@@ -22,7 +22,9 @@
 					<button id="filterButton" label="Filter"></button>
 				</div>
 			</div>
-			<listbox id="generalLedgerListbox" mold="paging" height="500px" width="1205px" pageSize="10">
+			<tabbox id="coaTabbox" class="tabbox-listbox" width="1205px">
+			</tabbox>			
+			<listbox id="generalLedgerListbox" class="listbox-tabbox" mold="paging" height="500px" width="1205px" pageSize="10">
 				<listhead>
 					<listheader label="Date" width="180px"/>
 					<listheader label="COA" width="260px"/>
@@ -37,6 +39,13 @@
 					<label id="totalLabel" value="Total Debit: "></label>
 				</div>
 			</div>
+			<div class="list-footer" style="height: 46px; width: 1205px">
+				<div class="list-footer-content">
+					<button id="exportExcelButton" label="Export"></button>
+					<label id="exportExcelLabel"></label>				
+				</div>
+			</div>
+			<timer id="timer" delay="30000"/>
 		</div>				
 	</n:section>
 </div>
