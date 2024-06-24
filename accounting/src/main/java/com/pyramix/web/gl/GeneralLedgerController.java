@@ -46,6 +46,7 @@ import com.pyramix.domain.gl.GeneralLedger;
 import com.pyramix.persistence.coa.dao.Coa_01_AccountTypeDao;
 import com.pyramix.persistence.gl.dao.GeneralLedgerDao;
 import com.pyramix.web.common.GFCBaseController;
+import com.pyramix.web.util.Download;
 
 public class GeneralLedgerController extends GFCBaseController {
 
@@ -67,6 +68,7 @@ public class GeneralLedgerController extends GFCBaseController {
 	private List<GeneralLedger> generalLedgers;
 	private List<Coa_05_Master> coaMasterList;
 	private ZoneId zoneId = getZoneId();
+	private String gen_xlsx_path, out_xlsx_path;
 	
 	private static final int START_YEAR = 2024;
 	
@@ -404,7 +406,9 @@ public class GeneralLedgerController extends GFCBaseController {
 	
 	public void onClick$exportExcelButton(Event event) throws Exception {
 		exportExcelLabel.setValue("Please wait...");
-
+		// set filepath for generated file and export destination
+		setFilePath();
+		
 		// NOTE: Jxls NOT working with Java Record
 		
 		// setup filename with timestamp
@@ -430,21 +434,41 @@ public class GeneralLedgerController extends GFCBaseController {
 		ledgerReports.forEach(l -> log.info(l.toString()));
 		
 		// file output info
-		log.info("Export to /pyramix/excel/"+filename);
+		log.info("Export to "+out_xlsx_path+filename);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("ledgerReports", ledgerReports);
 		JxlsPoiTemplateFillerBuilder.newInstance()
-			.withTemplate("/pyramix/template.xlsx")
+			.withTemplate(gen_xlsx_path+"template.xlsx")
 			.build()
-			.fill(data, new JxlsOutputFile(new File("/pyramix/excel/"+filename)));
+			.fill(data, new JxlsOutputFile(new File(gen_xlsx_path+filename)));
 
-		exportExcelLabel.setValue("Export to /pyramix/excel/"+filename);
-		timer.start();		
+		exportExcelLabel.setValue("Export to "+out_xlsx_path+filename);
+		timer.start();
+		
+		Download download = new Download();
+		download.downloadFile(gen_xlsx_path+filename, out_xlsx_path+filename);
 	}
 	
 	public void onTimer$timer(Event event) throws Exception {
 		exportExcelLabel.setValue("");
+	}
+	
+	public void setFilePath() throws Exception {
+		try (InputStream input = new FileInputStream("/pyramix/filepath.properties")) {
+			Properties prop = new Properties();
+			
+			prop.load(input);
+			
+			gen_xlsx_path = prop.getProperty("generated_xlsx_path");
+			out_xlsx_path = prop.getProperty("output_xlsx_path");
+			
+			log.info(gen_xlsx_path);
+			log.info(out_xlsx_path);
+			
+		} catch (IOException io) {
+			throw io;
+		}
 	}
 	
 	public GeneralLedgerDao getGeneralLedgerDao() {
