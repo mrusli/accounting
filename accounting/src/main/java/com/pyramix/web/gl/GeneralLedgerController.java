@@ -68,7 +68,7 @@ public class GeneralLedgerController extends GFCBaseController {
 	private List<GeneralLedger> generalLedgers;
 	private List<Coa_05_Master> coaMasterList;
 	private ZoneId zoneId = getZoneId();
-	private String gen_xlsx_path, out_xlsx_path;
+	private String src_xlsx_url, gen_xlsx_path, out_xlsx_path;
 	
 	private static final int START_YEAR = 2024;
 	
@@ -447,7 +447,7 @@ public class GeneralLedgerController extends GFCBaseController {
 		timer.start();
 		
 		Download download = new Download();
-		download.downloadFile(gen_xlsx_path+filename, out_xlsx_path+filename);
+		download.downloadFile(src_xlsx_url+filename, out_xlsx_path+filename);
 	}
 	
 	public void onTimer$timer(Event event) throws Exception {
@@ -460,6 +460,7 @@ public class GeneralLedgerController extends GFCBaseController {
 			
 			prop.load(input);
 			
+			src_xlsx_url	= prop.getProperty("source_url");
 			gen_xlsx_path = prop.getProperty("generated_xlsx_path");
 			out_xlsx_path = prop.getProperty("output_xlsx_path");
 			

@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, ZK_RESOURCES).permitAll()
                         .requestMatchers(HttpMethod.GET, REMOVE_DESKTOP_REGEX).permitAll()
                         .requestMatchers(req -> "rmDesktop".equals(req.getParameter("cmd_0"))).permitAll()
+                        .requestMatchers("/pyramix/excel").permitAll()
                         .requestMatchers("/success").authenticated()
                         .requestMatchers("/secure/**").authenticated()
                         .requestMatchers("/**").permitAll()

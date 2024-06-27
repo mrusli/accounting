@@ -1,15 +1,17 @@
 package com.pyramix.web.util;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -41,14 +43,30 @@ public class Download {
 	        SSLContext sc = SSLContext.getInstance("SSL");
 	        sc.init(null, trustAllCertificates, new SecureRandom());
 	        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	    } catch (GeneralSecurityException e) {
-	        throw new ExceptionInInitializerError(e);
+	        
+	        // Create all-trusting host name verifier
+	        HostnameVerifier allHostsValid = new HostnameVerifier() {
+	            public boolean verify(String hostname, SSLSession session) {
+	                return true;
+	            }
+	        };
+
+	        // Install the all-trusting host verifier
+	        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);	        
+	    } catch (NoSuchAlgorithmException e) {
+	    	e.printStackTrace();
+	    } catch (KeyManagementException e) {
+	    	e.printStackTrace();
 	    }
 	}	
 	
-	public void downloadFile(String filename, String outFilename) throws IOException {
-		URL url = new File(filename).toURI().toURL();
+	public void downloadFile(String urlFilename, String outFilename) throws IOException {
+		// URL url = new File(filename).toURI().toURL();
+		// log.info("downloading file from: "+url.toString());
+		URL url = new URL(urlFilename);
+		
 		log.info("downloading file from: "+url.toString());
+		log.info("export to: "+outFilename);
 		
 		try (BufferedInputStream in = new BufferedInputStream(url.openStream());
 			FileOutputStream fileOutputStream = new FileOutputStream(outFilename)) {
@@ -59,8 +77,6 @@ public class Download {
 				}				
 		} catch (IOException e) {
 			throw e;
-		}
-		
-	}
-	
+		}	
+	}	
 }
