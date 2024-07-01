@@ -447,7 +447,7 @@ public class GeneralLedgerController extends GFCBaseController {
 
 		Filedownload.save(xlsxFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		
-		exportExcelLabel.setValue("Export to "+gen_xlsx_path+filename);
+		exportExcelLabel.setValue("Download: "+filename);
 		timer.start();		
 	}
 	
