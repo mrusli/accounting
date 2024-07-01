@@ -68,7 +68,7 @@ public class GeneralLedgerController extends GFCBaseController {
 	private List<GeneralLedger> generalLedgers;
 	private List<Coa_05_Master> coaMasterList;
 	private ZoneId zoneId = getZoneId();
-	private String filename, src_xlsx_url, gen_xlsx_path, out_xlsx_path;
+	private String gen_xlsx_path;
 	
 	private static final int START_YEAR = 2024;
 	
@@ -416,7 +416,7 @@ public class GeneralLedgerController extends GFCBaseController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", getLocale());
 		String timestamp = currentDateTime.format(formatter);
 		// log.info(timestamp);
-		filename = "generalLedger"+timestamp+".xlsx";
+		String filename = "generalLedger"+timestamp+".xlsx";
 		
 		List<LedgerReport> ledgerReports = new ArrayList<LedgerReport>();
 		LedgerReport ledgerReport;
@@ -461,12 +461,9 @@ public class GeneralLedgerController extends GFCBaseController {
 			
 			prop.load(input);
 			
-			src_xlsx_url	= prop.getProperty("source_url");
 			gen_xlsx_path = prop.getProperty("generated_xlsx_path");
-			out_xlsx_path = prop.getProperty("output_xlsx_path");
 			
 			log.info(gen_xlsx_path);
-			log.info(out_xlsx_path);
 			
 		} catch (IOException io) {
 			throw io;
