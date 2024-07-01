@@ -29,6 +29,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
 import org.zkoss.zul.Datebox;
+import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.ListModelList;
 import org.zkoss.zul.Listbox;
@@ -46,7 +47,6 @@ import com.pyramix.domain.gl.GeneralLedger;
 import com.pyramix.persistence.coa.dao.Coa_01_AccountTypeDao;
 import com.pyramix.persistence.gl.dao.GeneralLedgerDao;
 import com.pyramix.web.common.GFCBaseController;
-import com.pyramix.web.util.Download;
 
 public class GeneralLedgerController extends GFCBaseController {
 
@@ -68,7 +68,7 @@ public class GeneralLedgerController extends GFCBaseController {
 	private List<GeneralLedger> generalLedgers;
 	private List<Coa_05_Master> coaMasterList;
 	private ZoneId zoneId = getZoneId();
-	private String src_xlsx_url, gen_xlsx_path, out_xlsx_path;
+	private String filename, src_xlsx_url, gen_xlsx_path, out_xlsx_path;
 	
 	private static final int START_YEAR = 2024;
 	
@@ -416,7 +416,7 @@ public class GeneralLedgerController extends GFCBaseController {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", getLocale());
 		String timestamp = currentDateTime.format(formatter);
 		// log.info(timestamp);
-		String filename = "generalLedger"+timestamp+".xlsx";
+		filename = "generalLedger"+timestamp+".xlsx";
 		
 		List<LedgerReport> ledgerReports = new ArrayList<LedgerReport>();
 		LedgerReport ledgerReport;
@@ -434,20 +434,21 @@ public class GeneralLedgerController extends GFCBaseController {
 		ledgerReports.forEach(l -> log.info(l.toString()));
 		
 		// file output info
-		log.info("Export to "+out_xlsx_path+filename);
+		log.info("Export to "+gen_xlsx_path+filename);
+		
+		File xlsxFile = new File(gen_xlsx_path+filename);
 		
 		Map<String, Object> data = new HashMap<>();
 		data.put("ledgerReports", ledgerReports);
 		JxlsPoiTemplateFillerBuilder.newInstance()
 			.withTemplate(gen_xlsx_path+"template.xlsx")
 			.build()
-			.fill(data, new JxlsOutputFile(new File(gen_xlsx_path+filename)));
+			.fill(data, new JxlsOutputFile(xlsxFile));
 
-		exportExcelLabel.setValue("Export to "+out_xlsx_path+filename);
-		timer.start();
+		Filedownload.save(xlsxFile, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		
-		Download download = new Download();
-		download.downloadFile(src_xlsx_url+filename, out_xlsx_path+filename);
+		exportExcelLabel.setValue("Export to "+gen_xlsx_path+filename);
+		timer.start();		
 	}
 	
 	public void onTimer$timer(Event event) throws Exception {
